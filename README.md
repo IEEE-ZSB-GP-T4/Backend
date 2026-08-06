@@ -14,7 +14,7 @@ We follow a three-tier branching model: **feature branches → dev → main**
 
 2. **Open a Pull Request into `dev`** (not `main`) once your feature is complete and tested.
 
-3. **After review/approval**, merge into `dev`. Delete the feature branch after merging.
+3. **After review/approval**, merge into `dev`.
 
 4. **Periodically**, once `dev` is stable and tested as a whole, the team lead opens a PR from `dev` → `main` to release.
 
