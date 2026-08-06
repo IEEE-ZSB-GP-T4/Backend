@@ -10,13 +10,15 @@ We follow a three-tier branching model: **feature branches → dev → main**
 
 ### Workflow
 
-1. **Work and commit on your branch:**
+1. **Creat your feature branch**
 
-2. **Open a Pull Request into `dev`** (not `main`) once your feature is complete and tested.
+2. **Work and commit on your branch**
 
-3. **After review/approval**, merge into `dev`.
+3. **Open a Pull Request into `dev`** (not `main`) once your feature is complete and tested.
 
-4. **Periodically**, once `dev` is stable and tested as a whole, the team lead opens a PR from `dev` → `main` to release.
+4. **After review/approval**, merge into `dev`.
+
+5. **Periodically**, once `dev` is stable and tested as a whole, the team lead opens a PR from `dev` → `main` to release.
 
 ### Rules
 
