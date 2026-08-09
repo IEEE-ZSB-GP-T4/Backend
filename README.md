@@ -1,13 +1,15 @@
+# Planora Backend
+
 ## Back-End
 
 ### Prerequisites
 
 Make sure the following software is installed:
 
-* PHP 8.3+
-* Composer 2.9+
-* Laravel 12.x
-* MySQL 8.0+
+- PHP 8.3+
+- Composer 2.9+
+- Laravel 12.x
+- MySQL 8.0+
 
 ---
 
@@ -253,6 +255,269 @@ Authorization: Bearer YOUR_TOKEN
 
 After logout, the revoked token can no longer be used to access protected endpoints.
 
+---
+
+# Courses
+
+The Courses API allows authenticated users to manage their own courses.
+
+Each course belongs to one user.
+
+```text
+User
+  │
+  │ 1
+  │
+  └──────────< Courses
+```
+
+All Courses endpoints require authentication using Laravel Sanctum.
+
+Send the token using:
+
+```http
+Authorization: Bearer YOUR_TOKEN
+```
+
+---
+
+## Course Endpoints
+
+| Method | Endpoint           | Authentication | Description              |
+| ------ | ------------------ | -------------- | ------------------------ |
+| GET    | `/api/courses`     | Yes            | Get all user's courses   |
+| POST   | `/api/courses`     | Yes            | Create a new course      |
+| GET    | `/api/courses/{id}`| Yes            | Get a specific course    |
+| PUT    | `/api/courses/{id}`| Yes            | Update a specific course |
+| DELETE | `/api/courses/{id}`| Yes            | Delete a specific course |
+
+---
+
+## Get All Courses
+
+Returns all courses belonging to the authenticated user.
+
+### Request
+
+```http
+GET /api/courses
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Courses retrieved successfully",
+    "data": [
+        {
+            "id": 1,
+            "user_id": 1,
+            "name": "Intro to Algorithms",
+            "instructor": "Dr. Ahmed",
+            "code": "CS101",
+            "created_at": "2026-08-09T10:00:00.000000Z",
+            "updated_at": "2026-08-09T10:00:00.000000Z"
+        },
+        {
+            "id": 2,
+            "user_id": 1,
+            "name": "Linear Algebra",
+            "instructor": "Dr. Ali",
+            "code": "MAT202",
+            "created_at": "2026-08-09T10:10:00.000000Z",
+            "updated_at": "2026-08-09T10:10:00.000000Z"
+        }
+    ]
+}
+```
+
+---
+
+## Create Course
+
+Creates a new course for the authenticated user.
+
+### Request
+
+```http
+POST /api/courses
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Body
+
+```json
+{
+    "name": "Intro to Algorithms",
+    "instructor": "Dr. Ahmed",
+    "code": "CS101"
+}
+```
+
+### Successful Response
+
+```json
+{
+    "status": 201,
+    "message": "Course created successfully",
+    "data": {
+        "id": 1,
+        "user_id": 1,
+        "name": "Intro to Algorithms",
+        "instructor": "Dr. Ahmed",
+        "code": "CS101",
+        "created_at": "2026-08-09T10:00:00.000000Z",
+        "updated_at": "2026-08-09T10:00:00.000000Z"
+    }
+}
+```
+
+### Validation
+
+| Field | Type | Required | Rules |
+| ----- | ---- | -------- | ----- |
+| `name` | string | Yes | Maximum 255 characters |
+| `instructor` | string | No | Maximum 255 characters |
+| `code` | string | Yes | Maximum 50 characters |
+
+---
+
+## Get Specific Course
+
+Returns a specific course belonging to the authenticated user.
+
+### Request
+
+```http
+GET /api/courses/1
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Course retrieved successfully",
+    "data": {
+        "id": 1,
+        "user_id": 1,
+        "name": "Intro to Algorithms",
+        "instructor": "Dr. Ahmed",
+        "code": "CS101",
+        "created_at": "2026-08-09T10:00:00.000000Z",
+        "updated_at": "2026-08-09T10:00:00.000000Z"
+    }
+}
+```
+
+---
+
+## Update Course
+
+Updates an existing course belonging to the authenticated user.
+
+### Request
+
+```http
+PUT /api/courses/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Body
+
+```json
+{
+    "name": "Advanced Algorithms",
+    "instructor": "Dr. Ahmed",
+    "code": "CS201"
+}
+```
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Course updated successfully",
+    "data": {
+        "id": 1,
+        "user_id": 1,
+        "name": "Advanced Algorithms",
+        "instructor": "Dr. Ahmed",
+        "code": "CS201",
+        "created_at": "2026-08-09T10:00:00.000000Z",
+        "updated_at": "2026-08-09T11:00:00.000000Z"
+    }
+}
+```
+
+---
+
+## Delete Course
+
+Deletes a specific course belonging to the authenticated user.
+
+### Request
+
+```http
+DELETE /api/courses/1
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Course deleted successfully",
+    "data": null
+}
+```
+
+---
+
+## Course Authorization
+
+Users can only access, update, or delete their own courses.
+
+For example, if the authenticated user has:
+
+```text
+user_id = 1
+```
+
+they can access:
+
+```text
+Course 1 → user_id = 1
+Course 2 → user_id = 1
+```
+
+but they cannot access:
+
+```text
+Course 5 → user_id = 2
+```
+
+Unauthorized access should return:
+
+```json
+{
+    "status": 403,
+    "message": "Unauthorized access to this course",
+    "data": null
+}
+```
 
 ---
 
@@ -266,9 +531,9 @@ feature/<name> → dev → main
 
 ### Branches
 
-* **`main`** — production-ready code only. Always stable and deployable.
-* **`dev`** — integration branch. All finished features are merged here first for testing before going to `main`.
-* **`feature/<name>`** — individual work branches. Each team member works in their own feature branch.
+- **`main`** — production-ready code only. Always stable and deployable.
+- **`dev`** — integration branch. All finished features are merged here first for testing before going to `main`.
+- **`feature/<name>`** — individual work branches. Each team member works in their own feature branch.
 
 ### Workflow
 
@@ -309,11 +574,11 @@ dev → main
 
 ## Branching Rules
 
-* Never commit directly to `main` or `dev`.
-* Always pull the latest `dev` before creating a feature branch.
-* Each feature should have its own branch.
-* Open a Pull Request for every merge.
-* Do not push directly to shared branches.
-* Resolve merge conflicts locally before opening a Pull Request.
-* Test your feature before creating the Pull Request.
-* Keep commits clear and related to one feature or change.
+- Never commit directly to `main` or `dev`.
+- Always pull the latest `dev` before creating a feature branch.
+- Each feature should have its own branch.
+- Open a Pull Request for every merge.
+- Do not push directly to shared branches.
+- Resolve merge conflicts locally before opening a Pull Request.
+- Test your feature before creating the Pull Request.
+- Keep commits clear and related to one feature or change.
