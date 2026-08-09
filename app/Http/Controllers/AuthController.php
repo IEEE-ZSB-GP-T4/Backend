@@ -32,7 +32,6 @@ class AuthController extends Controller
             ]
         );
     }
-
     public function login(Request $request)
     {
         $data = $request->validate([
@@ -50,11 +49,15 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'message' => 'Login successful',
-            'token' => $token,
-            'user' => $user,
-        ]);
+
+        return ApiResponse::response(
+            200,
+            'Login successful',
+            [
+                'user' => $user,
+                'token' => $token,
+            ]
+        );
     }
 
     public function logout(Request $request)
