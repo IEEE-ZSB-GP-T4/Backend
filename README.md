@@ -521,6 +521,400 @@ Unauthorized access should return:
 
 ---
 
+# Tasks
+
+The Tasks API allows authenticated users to create and manage tasks that belong to their courses.
+
+Each task belongs to one course, and each course belongs to one user.
+
+```text
+User
+  │
+  └── Courses
+        │
+        └── Tasks
+```
+
+All Task endpoints require authentication using Laravel Sanctum.
+
+Send the token using:
+
+```http
+Authorization: Bearer YOUR_TOKEN
+```
+
+---
+
+## Task Endpoints
+
+| Method | Endpoint | Authentication | Description |
+| ------ | -------- | -------------- | ----------- |
+| GET | `/api/tasks` | Yes | Get all user's tasks |
+| POST | `/api/tasks` | Yes | Create a new task |
+| GET | `/api/tasks/{id}` | Yes | Get a specific task |
+| PUT | `/api/tasks/{id}` | Yes | Update a specific task |
+| PATCH | `/api/tasks/{id}/complete` | Yes | Mark a task as completed |
+| DELETE | `/api/tasks/{id}` | Yes | Delete a specific task |
+| GET | `/api/tasks/upcoming-deadlines` | Yes | Get upcoming incomplete tasks ordered by deadline |
+
+---
+
+## Create Task
+
+Creates a new task for a course owned by the authenticated user.
+
+### Request
+
+```http
+POST /api/tasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Body
+
+```json
+{
+    "course_id": 1,
+    "title": "Study SQL Joins",
+    "description": "Study INNER JOIN, LEFT JOIN and RIGHT JOIN",
+    "deadline": "2026-08-15 18:00:00",
+    "estimated_hours": 2.5,
+    "priority": "high"
+}
+```
+
+### Validation
+
+| Field | Type | Required | Rules |
+| ----- | ---- | -------- | ----- |
+| `course_id` | integer | Yes | Must exist in courses and belong to the authenticated user |
+| `title` | string | Yes | Maximum 255 characters |
+| `description` | string | No | Nullable |
+| `deadline` | date | Yes | Valid date/time |
+| `estimated_hours` | numeric | Yes | Minimum 0 |
+| `priority` | string | Yes | `low`, `mid`, or `high` |
+
+The backend automatically sets:
+
+- `status` → `pending`
+- `completed_at` → `null`
+
+### Successful Response
+
+```json
+{
+    "status": 201,
+    "message": "Task created successfully",
+    "data": {
+        "id": 1,
+        "course_id": 1,
+        "title": "Study SQL Joins",
+        "description": "Study INNER JOIN, LEFT JOIN and RIGHT JOIN",
+        "deadline": "2026-08-15T18:00:00.000000Z",
+        "estimated_hours": "2.50",
+        "priority": "high",
+        "status": "pending",
+        "completed_at": null
+    }
+}
+```
+
+---
+
+## Get All Tasks
+
+Returns all tasks belonging to the authenticated user.
+
+### Request
+
+```http
+GET /api/tasks
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Tasks retrieved successfully",
+    "data": [
+        {
+            "id": 1,
+            "course_id": 1,
+            "title": "Study SQL Joins",
+            "description": "Study INNER JOIN, LEFT JOIN and RIGHT JOIN",
+            "deadline": "2026-08-15T18:00:00.000000Z",
+            "estimated_hours": "2.50",
+            "priority": "high",
+            "status": "pending",
+            "completed_at": null,
+            "course": {
+                "id": 1,
+                "name": "Database Systems",
+                "code": "CS301"
+            }
+        }
+    ]
+}
+```
+
+---
+
+## Get Specific Task
+
+Returns a specific task belonging to the authenticated user.
+
+### Request
+
+```http
+GET /api/tasks/1
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Task retrieved successfully",
+    "data": {
+        "id": 1,
+        "course_id": 1,
+        "title": "Study SQL Joins",
+        "description": "Study INNER JOIN, LEFT JOIN and RIGHT JOIN",
+        "deadline": "2026-08-15T18:00:00.000000Z",
+        "estimated_hours": "2.50",
+        "priority": "high",
+        "status": "pending",
+        "completed_at": null
+    }
+}
+```
+
+---
+
+## Update Task
+
+Updates an existing task belonging to the authenticated user.
+
+### Request
+
+```http
+PUT /api/tasks/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Body
+
+```json
+{
+    "title": "Study Advanced SQL Joins",
+    "description": "Study all SQL JOIN types",
+    "deadline": "2026-08-16 20:00:00",
+    "estimated_hours": 3,
+    "priority": "mid"
+}
+```
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Task updated successfully",
+    "data": {
+        "id": 1,
+        "course_id": 1,
+        "title": "Study Advanced SQL Joins",
+        "description": "Study all SQL JOIN types",
+        "deadline": "2026-08-16T20:00:00.000000Z",
+        "estimated_hours": "3.00",
+        "priority": "mid",
+        "status": "pending",
+        "completed_at": null
+    }
+}
+```
+
+---
+
+## Complete Task
+
+Marks a task as completed and records the completion time.
+
+### Request
+
+```http
+PATCH /api/tasks/1/complete
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+No request body is required.
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Task completed successfully",
+    "data": {
+        "id": 1,
+        "course_id": 1,
+        "title": "Study SQL Joins",
+        "status": "completed",
+        "completed_at": "2026-08-10T16:30:00.000000Z"
+    }
+}
+```
+
+---
+
+## Get Upcoming Deadlines
+
+Returns incomplete tasks whose deadlines are in the future, ordered from the nearest deadline to the latest deadline.
+
+This endpoint is useful for the Dashboard's **Upcoming Deadlines** section.
+
+### Request
+
+```http
+GET /api/tasks/upcoming-deadlines
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Upcoming deadlines retrieved successfully",
+    "data": [
+        {
+            "id": 2,
+            "course_id": 1,
+            "title": "Database Assignment",
+            "deadline": "2026-08-12T18:00:00.000000Z",
+            "estimated_hours": "3.00",
+            "priority": "high",
+            "status": "pending",
+            "completed_at": null,
+            "course": {
+                "id": 1,
+                "name": "Database Systems",
+                "code": "CS301"
+            }
+        },
+        {
+            "id": 3,
+            "course_id": 2,
+            "title": "Algorithms Assignment",
+            "deadline": "2026-08-20T18:00:00.000000Z",
+            "estimated_hours": "2.00",
+            "priority": "mid",
+            "status": "pending",
+            "completed_at": null,
+            "course": {
+                "id": 2,
+                "name": "Algorithms",
+                "code": "CS201"
+            }
+        }
+    ]
+}
+```
+
+The endpoint:
+
+- Returns only the authenticated user's tasks.
+- Excludes tasks with a past deadline.
+- Excludes completed tasks.
+- Orders tasks by the nearest deadline first.
+
+---
+
+## Delete Task
+
+Deletes a specific task belonging to the authenticated user.
+
+### Request
+
+```http
+DELETE /api/tasks/1
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Task deleted successfully",
+    "data": null
+}
+```
+
+---
+
+## Task Authorization
+
+Users can only access, update, complete, or delete their own tasks.
+
+The ownership chain is:
+
+```text
+Authenticated User
+       │
+       ↓
+     Course
+       │
+       ↓
+      Task
+```
+
+For example:
+
+```text
+User 1
+ ├── Course 1
+ │    └── Task 1
+ └── Course 2
+      └── Task 2
+```
+
+User 1 can access Task 1 and Task 2.
+
+If another user owns the course:
+
+```text
+User 2
+ └── Course 3
+      └── Task 3
+```
+
+User 1 cannot access Task 3.
+
+Unauthorized access should return:
+
+```json
+{
+    "status": 403,
+    "message": "Unauthorized access to this task",
+    "data": null
+}
+```
+
+---
+
 # Branching Strategy
 
 We follow a three-tier branching model:
