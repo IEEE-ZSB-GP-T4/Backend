@@ -3,6 +3,7 @@
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,3 +34,23 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('courses', CourseController::class);
 
 });
+
+// ===================== Task Routes =====================
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get(
+        'tasks/upcoming-deadlines',
+        [TaskController::class, 'upcomingDeadlines']
+    );
+
+    Route::apiResource('tasks', TaskController::class)
+        ->except(['create', 'edit']);
+
+    Route::patch(
+        'tasks/{task}/complete',
+        [TaskController::class, 'complete']
+    );
+
+});
+
+// 19|BhJt853FTta4IIbNbearpX8DGySWcPNfrX8Cp98p829b2db4
