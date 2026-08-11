@@ -915,6 +915,246 @@ Unauthorized access should return:
 
 ---
 
+
+# Data Export
+
+The backend provides a data export system for the **Data Science team**.
+
+The system exports available database tables as CSV files, packages them into a ZIP file, and provides them through a protected API endpoint.
+
+## Data Export Flow
+
+```text
+MySQL Database
+      ↓
+CsvExportService
+      ↓
+CSV Files
+      ↓
+ZIP File
+      ↓
+GET /api/data-export/all
+      ↓
+Data Science Team
+      ↓
+Python + Pandas
+```
+
+## Automatic CSV Export
+
+The database export is scheduled to run every **5 minutes**.
+
+Laravel Scheduler:
+
+```php
+Schedule::command('database:export-csv')
+    ->everyFiveMinutes();
+```
+
+Server cron:
+
+```cron
+* * * * * cd /var/www/html/Backend && php artisan schedule:run >> /dev/null 2>&1
+```
+
+Check scheduled tasks:
+
+```bash
+php artisan schedule:list
+```
+
+## Currently Exported Tables
+
+```text
+users.csv
+courses.csv
+tasks.csv
+```
+
+> `notifications.csv` is not included yet because the Notifications backend is still under development.
+
+## Data Export API
+
+| Method | Endpoint | Authentication | Description |
+| ------ | -------- | -------------- | ----------- |
+| GET | `/api/data-export/all` | Yes | Download all available datasets as a ZIP file |
+
+### Request
+
+```http
+GET /api/data-export/all
+Accept: application/zip
+Authorization: Bearer YOUR_TOKEN
+```
+
+The endpoint requires a valid **Laravel Sanctum Bearer Token**.
+
+### Response
+
+The API returns:
+
+```text
+planora_dataset.zip
+```
+
+Containing:
+
+```text
+planora_dataset.zip
+│
+├── users.csv
+├── courses.csv
+└── tasks.csv
+```
+
+---
+
+# Data Science Team
+
+The Data Science team can download the complete dataset using a single request.
+
+A Python script is provided:
+
+```text
+test.py
+```
+
+## Install Python Dependencies
+
+Create a virtual environment:
+
+```bash
+python3 -m venv .venv
+```
+
+Activate it:
+
+```bash
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install requests pandas
+```
+
+## Run the Export Script
+
+```bash
+python test.py
+```
+
+The script:
+
+1. Sends a request to the Data Export API.
+2. Authenticates using a Sanctum Bearer Token.
+3. Downloads the ZIP file.
+4. Extracts the CSV files.
+5. Saves the files locally inside the `data/` directory.
+
+Result:
+
+```text
+data/
+├── users.csv
+├── courses.csv
+└── tasks.csv
+```
+
+## Data Export Architecture
+
+```text
+                    MySQL
+                      │
+                      ▼
+               Laravel Backend
+                      │
+                      ▼
+              CsvExportService
+                      │
+                      ▼
+                 CSV Files
+                      │
+                Every 5 Minutes
+                      │
+                      ▼
+              Data Export API
+                      │
+                      ▼
+          GET /api/data-export/all
+                      │
+                      ▼
+                 ZIP File
+                      │
+                      ▼
+           Data Science Team
+                      │
+                      ▼
+                 Python
+                      │
+                      ▼
+                  Pandas
+                      │
+                      ▼
+                ML / Analysis
+```
+
+## Updating the Dataset
+
+Run:
+
+```bash
+python test.py
+```
+
+Process:
+
+```text
+Run test.py
+    ↓
+GET /api/data-export/all
+    ↓
+Download latest ZIP
+    ↓
+Extract CSV files
+    ↓
+Replace local dataset
+    ↓
+Ready for Data Science / ML
+```
+
+---
+
+# Security
+
+The Data Export endpoint is protected using Laravel Sanctum:
+
+```php
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get(
+        '/data-export/all',
+        [DataExportController::class, 'downloadAll']
+    );
+});
+```
+
+Do not commit sensitive files or generated datasets to GitHub.
+
+Add to `.gitignore`:
+
+```gitignore
+.env
+.venv/
+/data/
+*.zip
+```
+
+The exported CSV files may contain real database data and must not be uploaded to GitHub.
+
+
+---
+
 # Branching Strategy
 
 We follow a three-tier branching model:
