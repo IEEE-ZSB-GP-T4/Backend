@@ -3,6 +3,7 @@
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\DataExportController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -53,4 +54,41 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
-// 19|BhJt853FTta4IIbNbearpX8DGySWcPNfrX8Cp98p829b2db4
+// ===================== CSV Exports Routes =====================
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    // All CSV Exports
+    Route::get(
+        '/data-export/all',
+        [DataExportController::class, 'downloadAll']
+    );
+
+    Route::get('/data-export/users', [
+        DataExportController::class,
+        'users',
+    ]);
+
+    Route::get('/data-export/courses', [
+        DataExportController::class,
+        'courses',
+    ]);
+
+    Route::get('/data-export/study-plans', [
+        DataExportController::class,
+        'studyPlans',
+    ]);
+
+    Route::get('/data-export/tasks', [
+        DataExportController::class,
+        'tasks',
+    ]);
+
+    Route::get('/data-export/notifications', [
+        DataExportController::class,
+        'notifications',
+    ]);
+
+});
+
+// 21|RFyWjjAav3Z33SRaQRFe38fSNaPDKmKxz20veusPc3b0d8bc

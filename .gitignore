@@ -22,3 +22,12 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Python virtual environment
+.venv/
+
+# Data Science exported data
+/data/
+
+# Generated ZIP files
+*.zip
