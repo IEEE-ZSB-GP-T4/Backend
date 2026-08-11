@@ -1,0 +1,5 @@
+﻿id,user_id,name,instructor,code,created_at,updated_at
+2,8,"Data Base","Dr. Atwaa",IS201,"2026-08-09 17:47:31","2026-08-09 17:47:31"
+3,8,"Database Systems","Dr. Ahmed",CS301,"2026-08-10 16:19:16","2026-08-10 16:19:16"
+5,8,IOT,"Dr. Ahmed",IT301,"2026-08-11 19:13:47","2026-08-11 19:13:47"
+6,8,"System Design","Dr. Ahmed",IS2102,"2026-08-11 19:14:16","2026-08-11 19:14:16"
