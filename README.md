@@ -914,6 +914,319 @@ Unauthorized access should return:
 ```
 
 ---
+# Notifications
+
+The Notifications API allows authenticated users to view, read, and manage system-generated notifications.
+
+Notifications are **not created directly by users**. They are generated automatically by the system in two ways:
+
+1. **Scheduled deadline reminders** — a background job checks tasks nearing their deadline and notifies the task's owner.
+2. **Next-task notifications** — triggered automatically when a user completes a task.
+
+Every notification is also sent as an email to the user, in addition to appearing in-app.
+
+```text
+User
+  │
+  │ 1
+  │
+  └──────────< Notifications
+```
+
+All Notifications endpoints require authentication using Laravel Sanctum.
+
+Send the token using:
+
+```http
+Authorization: Bearer YOUR_TOKEN
+```
+
+---
+
+## Notification Endpoints
+
+| Method | Endpoint                       | Authentication | Description                          |
+| ------ | ------------------------------- | --------------- | ------------------------------------- |
+| GET    | `/api/notifications`            | Yes              | Get all of the user's notifications   |
+| GET    | `/api/notifications/{id}`       | Yes              | Get a specific notification           |
+| PATCH  | `/api/notifications/{id}/read`  | Yes              | Mark a notification as read           |
+| DELETE | `/api/notifications/{id}`       | Yes              | Delete a specific notification        |
+
+---
+
+## Get All Notifications
+
+Returns all notifications belonging to the authenticated user, most recent first.
+
+### Request
+
+```http
+GET /api/notifications
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Notifications retrieved successfully",
+    "data": [
+        {
+            "id": 1,
+            "user_id": 1,
+            "title": "Reminder: Task deadline approaching",
+            "body": "Your task \"Study SQL Joins\" is due tomorrow (2026-08-15 18:00)",
+            "is_read": false,
+            "created_at": "2026-08-14T18:00:00.000000Z"
+        }
+    ]
+}
+```
+
+---
+
+## Get Specific Notification
+
+Returns a specific notification belonging to the authenticated user.
+
+### Request
+
+```http
+GET /api/notifications/1
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Notification retrieved successfully",
+    "data": {
+        "id": 1,
+        "user_id": 1,
+        "title": "Reminder: Task deadline approaching",
+        "body": "Your task \"Study SQL Joins\" is due tomorrow (2026-08-15 18:00)",
+        "is_read": false,
+        "created_at": "2026-08-14T18:00:00.000000Z"
+    }
+}
+```
+
+---
+
+## Mark Notification as Read
+
+Marks a specific notification as read.
+
+### Request
+
+```http
+PATCH /api/notifications/1/read
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+No request body is required.
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Notification marked as read",
+    "data": {
+        "id": 1,
+        "user_id": 1,
+        "title": "Reminder: Task deadline approaching",
+        "body": "Your task \"Study SQL Joins\" is due tomorrow (2026-08-15 18:00)",
+        "is_read": true,
+        "created_at": "2026-08-14T18:00:00.000000Z"
+    }
+}
+```
+
+---
+
+## Delete Notification
+
+Deletes a specific notification belonging to the authenticated user.
+
+### Request
+
+```http
+DELETE /api/notifications/1
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Notification deleted",
+    "data": null
+}
+```
+
+---
+
+## Notification Authorization
+
+Users can only view, mark as read, or delete their own notifications, enforced via a `NotificationPolicy`.
+
+Unauthorized access returns:
+
+```json
+{
+    "status": 403,
+    "message": "This action is unauthorized",
+    "data": null
+}
+```
+
+---
+
+## Automatic Deadline Reminders
+
+Notifications for approaching deadlines are generated automatically by a scheduled command — they are **not** triggered through the API.
+
+| Reminder | Trigger window | Sent once per task per reminder type |
+| -------- | --------------- | -------------------------------------- |
+| First reminder | Task deadline is within the next 24 hours | Yes (tracked via `reminder_sent_at`) |
+| Second reminder | Task deadline is within the next 2 hours | Yes (tracked via `second_reminder_sent_at`) |
+
+Completed tasks (`status = completed`) are excluded from reminders.
+
+### Command
+
+```bash
+php artisan notifications:send-deadline-reminders
+```
+
+### Schedule
+
+Registered in `routes/console.php` to run automatically every hour:
+
+```php
+Schedule::command('notifications:send-deadline-reminders')->hourly();
+```
+
+Running the command hourly (instead of once daily) is what allows the 2-hour-before reminder to be caught accurately, since it depends on the exact time remaining before the deadline, not just the day.
+
+---
+
+## Automatic "Next Task" Notification
+
+When a task is marked as completed via `PATCH /api/tasks/{id}/complete`, the system automatically looks up the user's next incomplete task and sends a notification about it.
+
+**Next task selection logic:**
+1. Nearest upcoming `deadline` first.
+2. If multiple tasks share the same deadline, the one with the higher `priority` (`high` > `mid` > `low`) is chosen.
+3. Completed tasks are excluded.
+4. If the user has no other incomplete tasks, no notification is sent.
+
+This logic lives in `TaskController@notifyNextTask` and reuses the same `NotificationService` used by the deadline reminders, so every notification — regardless of source — is recorded in the database and emailed consistently.
+
+---
+
+## Email Delivery
+
+Every notification sent via `NotificationService::send()` is both:
+1. Saved to the `notifications` table (visible via the endpoints above / the in-app bell icon).
+2. Emailed to the user using the `NotificationMail` mailable (`resources/views/emails/notification.blade.php`).
+
+During development, `MAIL_MAILER` is set to `log` in `.env`, so emails are written to `storage/logs/laravel.log` instead of being sent to a real inbox. Before deployment, this should be switched to a real mail driver (e.g. Mailtrap for staging, or a production SMTP provider).
+
+---
+
+## Implementation Details
+
+This section lists every file created or modified while building the Notifications feature, for reference during code review or future maintenance.
+
+### New Files Created
+
+| File | Purpose |
+| ---- | ------- |
+| `database/migrations/..._create_notifications_table.php` | Creates the `notifications` table. |
+| `database/migrations/..._add_reminder_sent_at_to_tasks_table.php` | Adds `reminder_sent_at` (nullable timestamp) to `tasks`, used to prevent duplicate 24-hour reminders. |
+| `database/migrations/..._add_second_reminder_sent_at_to_tasks_table.php` | Adds `second_reminder_sent_at` (nullable timestamp) to `tasks`, used to prevent duplicate 2-hour reminders. |
+| `app/Models/Notification.php` | Eloquent model for notifications. `$timestamps = false` (only `created_at` exists, no `updated_at`), `is_read` cast to boolean. |
+| `app/Policies/NotificationPolicy.php` | Authorization rules (`view`, `update`, `delete`) — a notification can only be accessed by the user it belongs to. |
+| `app/Http/Controllers/NotificationController.php` | Handles `index`, `show`, `markAsRead`, `destroy` for the notification endpoints. Uses `$this->authorize()` with `NotificationPolicy`. |
+| `app/Services/NotificationService.php` | Central place all notifications are created from. `NotificationService::send($user, $title, $body)` creates the DB record **and** sends the email in one call, so every part of the codebase that needs to notify a user goes through the same logic. |
+| `app/Mail/NotificationMail.php` | Mailable class that defines the email's subject and view. |
+| `resources/views/emails/notification.blade.php` | HTML template used for every notification email. |
+| `app/Console/Commands/SendTaskDeadlineReminders.php` | Artisan command (`notifications:send-deadline-reminders`). Checks all tasks for two conditions and sends reminders accordingly: <br>• Deadline within 24 hours → first reminder (marks `reminder_sent_at`)<br>• Deadline within 2 hours → second reminder (marks `second_reminder_sent_at`)<br>Excludes completed tasks and tasks that already received each reminder type. |
+
+### Existing Files Modified
+
+| File | What changed |
+| ---- | ------------- |
+| `app/Models/User.php` | Added `notifications(): HasMany` relationship. |
+| `app/Models/Task.php` | Added `reminder_sent_at` and `second_reminder_sent_at` to `$fillable` and `$casts`. |
+| `app/Http/Controllers/TaskController.php` | `complete()` now calls a new private method `notifyNextTask()` after marking a task complete. This method finds the user's next incomplete task (nearest deadline first, then highest priority) and sends a notification via `NotificationService`. |
+| `routes/api.php` | Registered the four Notification routes (`GET /notifications`, `GET /notifications/{id}`, `PATCH /notifications/{id}/read`, `DELETE /notifications/{id}`) inside the existing `auth:sanctum` middleware group. |
+| `routes/console.php` | Registered the scheduler: `Schedule::command('notifications:send-deadline-reminders')->hourly()`. Runs hourly (not daily) so the 2-hour-before reminder is caught accurately. |
+| `bootstrap/app.php` | Added centralized exception handling (`withExceptions`) so `AuthenticationException`, `AuthorizationException` (used by the Notification policy), `ModelNotFoundException`, `NotFoundHttpException`, `ValidationException`, and any other `Throwable` all return a consistent `ApiResponse` JSON shape instead of Laravel's default error pages. This affects error responses project-wide, not just Notifications. |
+| `.env` | `MAIL_MAILER` left as `log` for local development. **To be changed before deployment** — see "Email Delivery" above. |
+
+### Database Schema: ERD vs. Actual Implementation
+
+The original ERD (shared at the start of the project) specified the `Notifications` table like this:
+
+```text
+Notifications (ERD)
+├── id            int
+├── user_id       int
+├── title         varchar
+├── body          varchar
+├── is_read       enum('yes','no')
+└── created_at    timestamp
+```
+
+**What we actually implemented is not identical** — two deliberate changes were made, plus two columns were added to `tasks` that don't appear in the ERD at all:
+
+| # | Difference | ERD said | We implemented | Why |
+| - | ---------- | -------- | ---------------- | --- |
+| 1 | `is_read` type | `enum('yes','no')` | `boolean`, default `false` | Booleans are smaller, faster to query (`where('is_read', false)` vs `where('is_read', 'no')`), and Eloquent casts them automatically — the API still returns `true`/`false` in JSON either way, so this is invisible to the frontend. |
+| 2 | `updated_at` | Not present in ERD | Still not present — `Notification` model sets `$timestamps = false` | Matches the ERD's intent: notifications are never edited after creation, only read or deleted, so there's nothing to "update." |
+| 3 | `tasks.reminder_sent_at` | **Not in the ERD** | Added (nullable timestamp) | Needed to track whether the "1 day before deadline" reminder was already sent for a task, so the scheduled command doesn't send it twice. |
+| 4 | `tasks.second_reminder_sent_at` | **Not in the ERD** | Added (nullable timestamp) | Same reasoning as #3, but for the "2 hours before deadline" reminder. |
+
+**Actual `notifications` table:**
+
+```text
+notifications
+├── id            bigint, primary key
+├── user_id       bigint, FK → users.id, cascade on delete
+├── title         varchar
+├── body          varchar
+├── is_read       boolean, default false
+└── created_at    timestamp   (no updated_at — see difference #2 above)
+```
+
+**Actual changes to the existing `tasks` table:**
+
+```text
+tasks
+├── ... (all original columns unchanged)
+├── reminder_sent_at         timestamp, nullable   ← new (difference #3)
+└── second_reminder_sent_at  timestamp, nullable   ← new (difference #4)
+```
+
+If anyone updates the master ERD diagram, these four differences are what need to be reflected in it.
+
+### Design Decisions Worth Knowing
+
+- **No `POST /api/notifications` endpoint exists on purpose.** Notifications are only ever created by the system (scheduled reminders, task completion), never directly by a user request. This keeps notification creation centralized and predictable.
+- **`is_read` is a boolean**, not the `enum('yes','no')` shown in the original ERD, for cleaner querying (`where('is_read', false)`) and smaller storage. Functionally equivalent.
+- **The two reminder "sent" columns live on `tasks`, not `notifications`**, because they represent task state ("has this task's reminder already gone out"), not notification state.
+- **The hourly schedule is a deliberate trade-off.** A daily schedule would be simpler but could miss the exact 2-hour window before a deadline. Hourly checking balances accuracy with simplicity; a more precise (e.g. every-minute) schedule was considered unnecessary for this project's scope.
 
 # Branching Strategy
 

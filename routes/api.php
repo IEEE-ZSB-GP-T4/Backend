@@ -4,12 +4,9 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
 
 // ===================== Auth Routes =====================
 Route::controller(AuthController::class)->group(function () {
@@ -53,4 +50,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
-// 19|BhJt853FTta4IIbNbearpX8DGySWcPNfrX8Cp98p829b2db4
+// ===================== Notification Routes =====================
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('notifications', [NotificationController::class, 'index']);
+    Route::get('notifications/{notification}', [NotificationController::class, 'show']);
+    Route::patch('notifications/{notification}/read', [NotificationController::class, 'markAsRead']);
+    Route::delete('notifications/{notification}', [NotificationController::class, 'destroy']);
+
+});
+
+
