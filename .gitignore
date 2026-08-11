@@ -27,6 +27,7 @@ Thumbs.db
 .venv/
 
 # Data Science exported data
+# /data/
 /data/
 
 # Generated ZIP files
