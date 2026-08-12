@@ -1,47 +1,62 @@
 # Planora Backend
 
-## Back-End
+## Table of Contents
 
-### Prerequisites
+- [Prerequisites](#prerequisites)
+- [Setup & Installation](#setup--installation)
+  - [Run Without Docker](#run-without-docker)
+  - [Run With Docker](#run-with-docker)
+- [Useful Docker Commands](#useful-docker-commands)
+- [Authentication](#authentication)
+- [Courses](#courses)
+- [Tasks](#tasks)
+- [Notifications](#notifications)
+- [Data Export](#data-export)
+- [Security](#security)
+- [Branching Strategy](#branching-strategy)
 
-Make sure the following software is installed:
+---
+
+# Prerequisites
+
+## Without Docker
 
 - PHP 8.3+
 - Composer 2.9+
 - Laravel 12.x
 - MySQL 8.0+
 
+## With Docker
+
+- Docker
+- Docker Compose
+
 ---
 
-## Setup & Installation
+# Setup & Installation
+
+## Run Without Docker
 
 ### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/IEEE-ZSB-GP-T4/Backend.git
-```
-
-### 2. Navigate to the Backend Directory
-
-```bash
 cd Backend
 ```
 
-### 3. Install Dependencies
+### 2. Install Dependencies
 
 ```bash
 composer install
 ```
 
-### 4. Configure Environment Variables
-
-Copy the example environment file:
+### 3. Configure Environment Variables
 
 ```bash
 cp .env.example .env
 ```
 
-Update the database configuration in the `.env` file:
+Configure MySQL:
 
 ```env
 DB_CONNECTION=mysql
@@ -52,40 +67,152 @@ DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
 
-Make sure MySQL is running before continuing.
-
-### 5. Generate the Application Key
+### 4. Generate the Application Key
 
 ```bash
 php artisan key:generate
 ```
 
-### 6. Install API Authentication
-
-Laravel Sanctum is used for API authentication.
+### 5. Install API Authentication
 
 ```bash
 php artisan install:api
 ```
 
-This command installs the API authentication setup and creates the required Sanctum configuration and migrations.
+> Skip this step if Sanctum is already installed and configured.
 
-### 7. Run Database Migrations
+### 6. Run Migrations
 
 ```bash
 php artisan migrate
 ```
 
-### 8. Start the Development Server
+### 7. Start the Server
 
 ```bash
 php artisan serve
 ```
 
-The application will be available at:
+```text
+http://127.0.0.1:8000
+```
+
+---
+
+## Run With Docker
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/IEEE-ZSB-GP-T4/Backend.git
+cd Backend
+```
+
+### 2. Create the Environment File
+
+```bash
+cp .env.example .env
+```
+
+For Docker, the database host should be the MySQL service name:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=smart_study_planner
+DB_USERNAME=laravel
+DB_PASSWORD=laravel
+```
+
+> Make sure the database credentials match your `docker-compose.yml`.
+
+### 3. Build and Start Containers
+
+```bash
+docker compose up -d --build
+```
+
+### 4. Install Dependencies
+
+```bash
+docker compose exec app composer install
+```
+
+### 5. Generate Application Key
+
+```bash
+docker compose exec app php artisan key:generate
+```
+
+### 6. Run Migrations
+
+```bash
+docker compose exec app php artisan migrate
+```
+
+### 7. Clear Cache
+
+```bash
+docker compose exec app php artisan optimize:clear
+```
+
+Access the application using the port configured in `docker-compose.yml`, for example:
+
+```text
+http://localhost
+```
+
+or:
 
 ```text
 http://127.0.0.1:8000
+```
+
+---
+
+# Useful Docker Commands
+
+### Start
+
+```bash
+docker compose up -d
+```
+
+### Stop
+
+```bash
+docker compose down
+```
+
+### Rebuild
+
+```bash
+docker compose up -d --build
+```
+
+### Check Containers
+
+```bash
+docker compose ps
+```
+
+### View Logs
+
+```bash
+docker compose logs app
+```
+
+### Access Application Container
+
+```bash
+docker compose exec app bash
+```
+
+### Run Artisan Commands
+
+```bash
+docker compose exec app php artisan <command>
 ```
 
 ---
