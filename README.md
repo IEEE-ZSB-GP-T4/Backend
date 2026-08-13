@@ -1354,6 +1354,292 @@ If anyone updates the master ERD diagram, these four differences are what need t
 - **`is_read` is a boolean**, not the `enum('yes','no')` shown in the original ERD, for cleaner querying (`where('is_read', false)`) and smaller storage. Functionally equivalent.
 - **The two reminder "sent" columns live on `tasks`, not `notifications`**, because they represent task state ("has this task's reminder already gone out"), not notification state.
 - **The hourly schedule is a deliberate trade-off.** A daily schedule would be simpler but could miss the exact 2-hour window before a deadline. Hourly checking balances accuracy with simplicity; a more precise (e.g. every-minute) schedule was considered unnecessary for this project's scope.
+---
+
+# Study Plan
+
+The Study Plan API lets an authenticated user select a set of their pending tasks, specify how many hours they have available to study per day, and get back an AI-generated day-by-day study schedule — built by distributing the selected tasks' estimated hours across the days leading up to each task's deadline, prioritizing earlier deadlines and higher priority.
+
+Every time a plan is requested, it's saved as a **new history entry** rather than overwriting the previous one — so a user can look back at plans they generated in the past (useful for the Performance Analytics feature). Editing or deleting a task afterwards does not retroactively change a plan already generated, since each plan stores a snapshot of the tasks at the moment it was created.
+
+```text
+User
+  │
+  │ 1
+  │
+  └──────────< Study_plans
+```
+
+All Study Plan endpoints require authentication using Laravel Sanctum.
+
+Send the token using:
+
+```http
+Authorization: Bearer YOUR_TOKEN
+```
+
+---
+
+## Study Plan Endpoints
+
+| Method | Endpoint                  | Authentication | Description                                              |
+| ------ | -------------------------- | --------------- | ---------------------------------------------------------- |
+| GET    | `/api/study-plan/tasks`    | Yes              | Get the user's courses with their pending tasks, for building a selection checklist |
+| POST   | `/api/study-plan`          | Yes              | Generate a new study plan from selected tasks              |
+| GET    | `/api/study-plan`          | Yes              | Get the user's most recently generated plan                |
+| GET    | `/api/study-plan/history`  | Yes              | Get all of the user's previously generated plans           |
+
+---
+
+## Get Tasks for Checklist
+
+Returns the authenticated user's courses, each with its non-completed tasks nested inside — intended for rendering a task-selection checklist (checkboxes) on the frontend before generating a plan.
+
+### Request
+
+```http
+GET /api/study-plan/tasks
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Tasks retrieved successfully",
+    "data": [
+        {
+            "id": 2,
+            "name": "Database Systems",
+            "code": "CS301",
+            "tasks": [
+                {
+                    "id": 5,
+                    "title": "Quick Quiz Review",
+                    "deadline": "2026-08-14T10:00:00.000000Z",
+                    "estimated_hours": "6.00",
+                    "priority": "high",
+                    "status": "pending"
+                }
+            ]
+        }
+    ]
+}
+```
+
+Completed tasks are excluded automatically.
+
+---
+
+## Generate Study Plan
+
+Generates a new AI-assisted study plan from a chosen set of tasks and a daily available-hours budget, and saves it as a new history entry.
+
+### Request
+
+```http
+POST /api/study-plan
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Body
+
+```json
+{
+    "available_hours": 2,
+    "task_ids": [4, 5, 6]
+}
+```
+
+### Validation
+
+| Field | Type | Required | Rules |
+| ----- | ---- | -------- | ----- |
+| `available_hours` | numeric | Yes | Between 0.5 and 16 |
+| `task_ids` | array | Yes | At least 1 item |
+| `task_ids.*` | integer | Yes | Must exist in `tasks` and belong to a course owned by the authenticated user |
+
+### How the schedule is built
+
+- Tasks are sorted by nearest deadline first, then by higher priority (`high` > `mid` > `low`) as a tiebreaker.
+- The plan covers every day from today until the **latest** deadline among the selected tasks — so all selected tasks fit somewhere in the schedule.
+- Each day is filled up to `available_hours`, splitting a task's remaining hours across multiple days if needed.
+- A task is never scheduled *after* its own deadline.
+- If the available hours aren't enough to fully schedule a task before its deadline, the task is **not** silently dropped — it's listed in a `warnings` array explaining how many hours are still missing.
+
+### Successful Response
+
+```json
+{
+    "status": 201,
+    "message": "Study plan generated successfully",
+    "data": {
+        "id": 2,
+        "available_hours": 2,
+        "generated_plan": {
+            "days": [
+                {
+                    "date": "2026-08-13",
+                    "sessions": [
+                        { "task_id": 5, "title": "Quick Quiz Review", "hours": 2 }
+                    ]
+                }
+            ],
+            "warnings": [
+                {
+                    "task_id": 5,
+                    "title": "Quick Quiz Review",
+                    "hours_missing": 2,
+                    "message": "\"Quick Quiz Review\" won't be fully covered before its deadline with the available hours."
+                }
+            ]
+        },
+        "created_at": "2026-08-13T04:22:25.000000Z"
+    }
+}
+```
+
+---
+
+## Get Latest Study Plan
+
+Returns the authenticated user's most recently generated plan.
+
+### Request
+
+```http
+GET /api/study-plan
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Successful Response
+
+Same shape as the "Generate Study Plan" response above.
+
+### If no plan exists yet
+
+```json
+{
+    "status": 404,
+    "message": "No study plan found yet",
+    "data": null
+}
+```
+
+---
+
+## Get Study Plan History
+
+Returns all of the authenticated user's previously generated plans, most recent first.
+
+### Request
+
+```http
+GET /api/study-plan/history
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Study plan history retrieved successfully",
+    "data": [
+        {
+            "id": 2,
+            "available_hours": 2,
+            "generated_plan": { "days": [ /* ... */ ], "warnings": [ /* ... */ ] },
+            "created_at": "2026-08-13T04:22:25.000000Z"
+        }
+    ]
+}
+```
+
+---
+
+## Study Plan Authorization
+
+A user can only ever generate, view, or list their own study plans — enforced by scoping every query through `$request->user()->studyPlans()` and by validating that every submitted `task_id` belongs to a course owned by the authenticated user.
+
+---
+
+## AI Integration (Grok)
+
+Plan generation is handled by a swappable service, following the same pattern used elsewhere in the project (e.g. `MAIL_MAILER=log` for Notifications):
+
+- **`StudyPlanGeneratorService`** — the real implementation. Sends the selected tasks and available hours to the Grok API and parses its JSON response into the plan shape shown above.
+- **`FakeStudyPlanGeneratorService`** — a local, deterministic implementation that runs the same day-by-day allocation logic in PHP, with no external API call. Used for development and testing while a Grok API key isn't available yet, and useful afterwards for fast local testing without hitting the real API.
+
+`StudyPlanController` is currently wired to use `FakeStudyPlanGeneratorService`. Switching to the real Grok service once an API key is available is a one-line change in the controller's constructor (marked with a `TODO` comment).
+
+### Required environment variables
+
+```env
+GROK_API_KEY=
+GROK_API_URL=https://api.x.ai/v1/chat/completions
+GROK_MODEL=grok-4
+```
+
+`GROK_API_KEY` is left empty until deployment/integration — the real service throws a clear error if a plan is requested while it's unset, rather than failing silently.
+
+---
+
+## Database Schema: Study Plans
+
+Unlike Notifications, the `study_plans` table matches the original ERD exactly — no changes were needed:
+
+```text
+study_plans
+├── id                bigint, primary key
+├── user_id           bigint, FK → users.id, cascade on delete
+├── available_hours   decimal(4,1)
+├── generated_plan    json
+├── created_at        timestamp
+└── updated_at        timestamp
+```
+
+`available_hours` deliberately stores a single number (applied the same for every day), not a per-weekday breakdown — this was a considered simplification, not an oversight.
+
+---
+
+## Implementation Details: Study Plan
+
+### New Files Created
+
+| File | Purpose |
+| ---- | ------- |
+| `database/migrations/..._create_study_plans_table.php` | Creates the `study_plans` table. |
+| `app/Models/StudyPlan.php` | Eloquent model. `generated_plan` cast to `array` for automatic JSON encode/decode. |
+| `app/Http/Requests/StoreStudyPlanRequest.php` | Validates `available_hours` and `task_ids`, and ensures every task ID belongs to the authenticated user. |
+| `app/Http/Controllers/StudyPlanController.php` | Handles `tasksForChecklist`, `store`, `index`, and `history`. |
+| `app/Http/Resources/StudyPlanResource.php` | Formats a study plan for API responses. |
+| `app/Services/StudyPlanGeneratorService.php` | Real Grok-backed plan generator. |
+| `app/Services/FakeStudyPlanGeneratorService.php` | Deterministic local generator used during development/testing. |
+| `config/grok.php` | Reads Grok API settings from `.env`. |
+
+### Existing Files Modified
+
+| File | What changed |
+| ---- | ------------- |
+| `app/Models/User.php` | Added `studyPlans(): HasMany` relationship. |
+| `routes/api.php` | Registered the four Study Plan routes inside the existing `auth:sanctum` middleware group. |
+| `.env.example` | Added `GROK_API_KEY`, `GROK_API_URL`, `GROK_MODEL` (all empty/default — no real key committed). |
+
+### Design Decisions Worth Knowing
+
+- **Plans are never overwritten** — every generation request creates a new row, preserving history for future analytics and letting a user compare past plans to what actually happened.
+- **A plan is a snapshot.** It stores task titles/hours as they were at generation time, inside the `generated_plan` JSON — so later editing or deleting a task doesn't retroactively change a plan that already included it.
+- **The plan's length is driven by the furthest deadline among the selected tasks**, not a fixed number of days — this guarantees every selected task has somewhere to be scheduled.
+- **Warnings instead of silent failure.** If the available hours can't fit a task in before its deadline, it's reported in a `warnings` array rather than being dropped or scheduled late without explanation.
+- **The Fake and real generators return the exact same JSON shape** (`days` + `warnings`), so the frontend never needs to know which one is active.
+
 
 
 # Data Export
