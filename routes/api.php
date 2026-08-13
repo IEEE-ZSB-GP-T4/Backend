@@ -7,6 +7,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StudyPlanController;
 
 // ===================== Auth Routes =====================
 Route::controller(AuthController::class)->group(function () {
@@ -60,4 +61,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
+// ===================== Study Plan Routes =====================
+Route::middleware('auth:sanctum')->group(function () {
 
+    Route::get('study-plan/tasks', [StudyPlanController::class, 'tasksForChecklist']);
+    Route::get('study-plan/history', [StudyPlanController::class, 'history']);
+    Route::post('study-plan', [StudyPlanController::class, 'store']);
+    Route::get('study-plan', [StudyPlanController::class, 'index']);
+
+});
