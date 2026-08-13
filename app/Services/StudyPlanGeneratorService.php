@@ -49,7 +49,7 @@ class StudyPlanGeneratorService
 }
     
 
-   private function systemPrompt(): string
+private function systemPrompt(): string
 {
     return <<<TEXT
 You are a study planning assistant. You receive a student's daily available
@@ -70,6 +70,7 @@ or after it:
   "days": [
     {
       "date": "YYYY-MM-DD",
+      "day_name": "Monday",
       "sessions": [
         {"task_id": number, "title": string, "hours": number}
       ]
