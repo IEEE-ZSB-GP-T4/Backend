@@ -1,0 +1,4 @@
+study_plan_id,user_id,available_hours,days,warnings
+1,1,4.0,"[{'date': '2026-08-13', 'day_name': 'Thursday', 'sessions': [{'hours': 2.5, 'title': 'SQL Joins', 'task_id': 1}]}, {'date': '2026-08-14', 'day_name': 'Friday', 'sessions': []}, {'date': '2026-08-15', 'day_name': 'Saturday', 'sessions': []}]",[]
+2,1,4.0,"[{'date': '2026-08-13', 'day_name': 'Thursday', 'sessions': [{'hours': 2.5, 'title': 'SQL Joins', 'task_id': 1}]}, {'date': '2026-08-14', 'day_name': 'Friday', 'sessions': []}, {'date': '2026-08-15', 'day_name': 'Saturday', 'sessions': []}]",[]
+3,1,15.0,"[{'date': '2026-08-13', 'day_name': 'Thursday', 'sessions': [{'hours': 2.5, 'title': 'SQL Joins', 'task_id': 1}]}, {'date': '2026-08-14', 'day_name': 'Friday', 'sessions': []}, {'date': '2026-08-15', 'day_name': 'Saturday', 'sessions': []}]",[]

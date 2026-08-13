@@ -30,10 +30,10 @@ class CsvExportService
     public function exportAll(): void
     {
         $this->exportUsers();
-        // $this->exportStudyPlans();
+        $this->exportStudyPlans();
         $this->exportCourses();
         $this->exportTasks();
-        // $this->exportNotifications();
+        $this->exportNotifications();
     }
 
     /**
@@ -57,21 +57,21 @@ class CsvExportService
     /**
      * Export study_plans table.
      */
-    // public function exportStudyPlans(): void
-    // {
-    //     $this->exportTable(
-    //         DB::table('study_plans'),
-    //         'study_plans.csv',
-    //         [
-    //             'id',
-    //             'user_id',
-    //             'available_hours',
-    //             'generated_plan',
-    //             'created_at',
-    //             'updated_at',
-    //         ]
-    //     );
-    // }
+    public function exportStudyPlans(): void
+    {
+        $this->exportTable(
+            DB::table('study_plans'),
+            'study_plans.csv',
+            [
+                'id',
+                'user_id',
+                'available_hours',
+                'generated_plan',
+                'created_at',
+                'updated_at',
+            ]
+        );
+    }
 
     /**
      * Export courses table.
@@ -120,21 +120,21 @@ class CsvExportService
     /**
      * Export notifications table.
      */
-    // public function exportNotifications(): void
-    // {
-    //     $this->exportTable(
-    //         DB::table('notifications'),
-    //         'notifications.csv',
-    //         [
-    //             'id',
-    //             'user_id',
-    //             'title',
-    //             'body',
-    //             'is_read',
-    //             'created_at',
-    //         ]
-    //     );
-    // }
+    public function exportNotifications(): void
+    {
+        $this->exportTable(
+            DB::table('notifications'),
+            'notifications.csv',
+            [
+                'id',
+                'user_id',
+                'title',
+                'body',
+                'is_read',
+                'created_at',
+            ]
+        );
+    }
 
     /**
      * Export any table to CSV.

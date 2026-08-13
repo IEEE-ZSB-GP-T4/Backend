@@ -19,20 +19,20 @@ class DataExportController extends Controller
         return $this->downloadCsv('courses.csv');
     }
 
-    // public function studyPlans(): StreamedResponse
-    // {
-    //     return $this->downloadCsv('study_plans.csv');
-    // }
+    public function studyPlans(): StreamedResponse
+    {
+        return $this->downloadCsv('study_plans.csv');
+    }
 
     public function tasks(): StreamedResponse
     {
         return $this->downloadCsv('tasks.csv');
     }
 
-    // public function notifications(): StreamedResponse
-    // {
-    //     return $this->downloadCsv('notifications.csv');
-    // }
+    public function notifications(): StreamedResponse
+    {
+        return $this->downloadCsv('notifications.csv');
+    }
 
     private function downloadCsv(string $fileName): StreamedResponse
     {
