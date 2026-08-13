@@ -125,52 +125,26 @@ class TaskController extends Controller
     }
 
     public function complete(Request $request, Task $task)
-{
-    if ($task->course->user_id !== $request->user()->id) {
+    {
+        if ($task->course->user_id !== $request->user()->id) {
+            return ApiResponse::response(
+                403,
+                'Unauthorized access to this task',
+                null
+            );
+        }
+
+        $task->update([
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
         return ApiResponse::response(
-            403,
-            'Unauthorized access to this task',
-            null
+            200,
+            'Task completed successfully',
+            $task->fresh()->load('course')
         );
     }
-
-    $task->update([
-        'status' => 'completed',
-        'completed_at' => now(),
-    ]);
-
-    $this->notifyNextTask($request->user(), $task);
-
-    return ApiResponse::response(
-        200,
-        'Task completed successfully',
-        $task->fresh()->load('course')
-    );
-}
-
-/**
- * Notify the user about their next upcoming task after completing one.
- */
-private function notifyNextTask(\App\Models\User $user, Task $completedTask): void
-{
-    $nextTask = Task::query()
-        ->whereHas('course', fn ($query) => $query->where('user_id', $user->id))
-        ->where('id', '!=', $completedTask->id)
-        ->whereNotIn('status', ['completed'])
-        ->orderBy('deadline', 'asc')
-        ->orderByRaw("FIELD(priority, 'high', 'mid', 'low')")
-        ->first();
-
-    if (! $nextTask) {
-        return;
-    }
-
-    \App\Services\NotificationService::send(
-        $user,
-        'Next up: your next task',
-        "Great job finishing \"{$completedTask->title}\"! Your next task is \"{$nextTask->title}\", due {$nextTask->deadline->format('Y-m-d H:i')}."
-    );
-}
 
     /**
      * Get upcoming deadlines for the authenticated user.
