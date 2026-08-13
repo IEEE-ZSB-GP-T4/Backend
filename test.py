@@ -2,8 +2,7 @@ import requests
 import zipfile
 import io
 import os
-import pandas as pd
-import json
+import sys
 
 
 # =========================
@@ -18,7 +17,7 @@ DATA_FOLDER = "data"
 
 
 # =========================
-# Request CSV ZIP
+# Request Dataset ZIP
 # =========================
 
 headers = {
@@ -29,18 +28,56 @@ headers = {
 
 print("Downloading dataset...")
 
-response = requests.get(
-    URL,
-    headers=headers
-)
 
-response.raise_for_status()
+try:
+    response = requests.get(
+        URL,
+        headers=headers,
+        timeout=60
+    )
+
+    # Check HTTP status
+    response.raise_for_status()
+
+except requests.exceptions.RequestException as error:
+
+    print("\nDownload failed!")
+    print(error)
+
+    sys.exit(1)
+
 
 print("Download successful!")
 
 
 # =========================
-# Create data folder
+# Check Response Type
+# =========================
+
+content_type = response.headers.get("Content-Type", "")
+content_length = response.headers.get("Content-Length", "Unknown")
+
+print(f"\nContent-Type: {content_type}")
+print(f"Content-Length: {content_length}")
+
+
+# Check if response is a valid ZIP
+if not zipfile.is_zipfile(io.BytesIO(response.content)):
+
+    print("\nERROR: The server response is not a valid ZIP file.")
+
+    print("\nServer response:")
+
+    try:
+        print(response.json())
+    except ValueError:
+        print(response.text[:2000])
+
+    sys.exit(1)
+
+
+# =========================
+# Create Data Folder
 # =========================
 
 os.makedirs(
@@ -50,14 +87,29 @@ os.makedirs(
 
 
 # =========================
-# Extract ZIP
+# Open ZIP
 # =========================
 
-zip_file = zipfile.ZipFile(
-    io.BytesIO(response.content)
-)
+try:
+
+    zip_file = zipfile.ZipFile(
+        io.BytesIO(response.content)
+    )
+
+except zipfile.BadZipFile:
+
+    print("\nERROR: Downloaded file is corrupted.")
+
+    sys.exit(1)
+
+
+# =========================
+# Show ZIP Files
+# =========================
 
 print("\nFiles inside ZIP:")
+
+csv_files = []
 
 for file_name in zip_file.namelist():
 
@@ -66,6 +118,8 @@ for file_name in zip_file.namelist():
     # Extract only CSV files
     if file_name.endswith(".csv"):
 
+        csv_files.append(file_name)
+
         zip_file.extract(
             file_name,
             DATA_FOLDER
@@ -73,185 +127,28 @@ for file_name in zip_file.namelist():
 
 
 # =========================
-# Read Study Plans
+# Check CSV Files
 # =========================
 
-study_plans_path = os.path.join(
-    DATA_FOLDER,
-    "study_plans.csv"
-)
+if not csv_files:
 
+    print("\nWARNING: No CSV files found inside the ZIP.")
 
-if os.path.exists(study_plans_path):
-
-    print("\n==============================")
-    print("Reading Study Plans")
-    print("==============================\n")
-
-    df = pd.read_csv(
-        study_plans_path
-    )
-
-    print("Study Plans Data:\n")
-
-    print(
-        df.head()
-    )
-
-
-    # =========================
-    # Check generated_plan
-    # =========================
-
-    if "generated_plan" in df.columns:
-
-        print("\n==============================")
-        print("Parsing Generated Plans")
-        print("==============================\n")
-
-
-        parsed_plans = []
-
-
-        # Loop through study plans
-        for _, row in df.iterrows():
-
-            study_plan_id = row["id"]
-
-
-            try:
-
-                generated_plan = json.loads(
-                    row["generated_plan"]
-                )
-
-
-                print(
-                    f"\nStudy Plan ID: {study_plan_id}"
-                )
-
-                print(
-                    json.dumps(
-                        generated_plan,
-                        indent=4,
-                        ensure_ascii=False
-                    )
-                )
-
-
-                # =========================
-                # Convert generated plan
-                # to rows
-                # =========================
-
-                if isinstance(generated_plan, list):
-
-                    for item in generated_plan:
-
-                        parsed_plans.append({
-                            "study_plan_id": study_plan_id,
-                            "user_id": row.get("user_id"),
-                            "available_hours": row.get(
-                                "available_hours"
-                            ),
-                            **item
-                        })
-
-
-                elif isinstance(generated_plan, dict):
-
-                    parsed_plans.append({
-                        "study_plan_id": study_plan_id,
-                        "user_id": row.get("user_id"),
-                        "available_hours": row.get(
-                            "available_hours"
-                        ),
-                        **generated_plan
-                    })
-
-
-            except (
-                json.JSONDecodeError,
-                TypeError
-            ):
-
-                print(
-                    f"\nError parsing generated_plan "
-                    f"for Study Plan ID: {study_plan_id}"
-                )
-
-
-        # =========================
-        # Create Parsed DataFrame
-        # =========================
-
-        if parsed_plans:
-
-            parsed_df = pd.DataFrame(
-                parsed_plans
-            )
-
-            print("\n==============================")
-            print("Parsed Study Plans DataFrame")
-            print("==============================\n")
-
-            print(
-                parsed_df
-            )
-
-
-            # =========================
-            # Save Parsed CSV
-            # =========================
-
-            parsed_file_path = os.path.join(
-                DATA_FOLDER,
-                "parsed_study_plans.csv"
-            )
-
-            parsed_df.to_csv(
-                parsed_file_path,
-                index=False
-            )
-
-            print(
-                "\nParsed study plans saved successfully!"
-            )
-
-            print(
-                f"File: {os.path.abspath(parsed_file_path)}"
-            )
-
-
-        else:
-
-            print(
-                "\nNo parsed study plan data found."
-            )
-
-
-    else:
-
-        print(
-            "\nColumn 'generated_plan' "
-            "was not found in study_plans.csv"
-        )
-
-
-else:
-
-    print(
-        "\nstudy_plans.csv was not found!"
-    )
+    sys.exit(1)
 
 
 # =========================
 # Finished
 # =========================
 
-print("\n==============================")
-print("Dataset updated successfully!")
-print("==============================")
+print("\nDataset updated successfully!")
+
+print("\nDownloaded CSV files:")
+
+for file_name in csv_files:
+
+    print(f"- {file_name}")
+
 
 print("\nCSV files are stored in:")
 
