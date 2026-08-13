@@ -10,13 +10,13 @@ class FakeStudyPlanGeneratorService
 {
     public function generate(float $availableHours, Collection $tasks): array
 {
-    // رتبي التاسكات: الـ deadline الأقرب الأول، ولو تعادل، الـ priority الأعلى الأول
+    // Sort tasks by deadline ascending, then by priority descending
     $tasks = $tasks->sortBy([
         ['deadline', 'asc'],
         fn ($a, $b) => $this->priorityWeight($b->priority) <=> $this->priorityWeight($a->priority),
     ])->values();
 
-    // array عادي بدل Collection، عشان نقدر نعدل جوه العناصر المتداخلة من غير مشاكل
+   // Initialize remaining hours for each task
     $remaining = [];
     foreach ($tasks as $task) {
         $remaining[$task->id] = [
@@ -61,10 +61,11 @@ class FakeStudyPlanGeneratorService
             $hoursLeftToday -= $hoursForThisSession;
         }
 
-        $days[] = [
-            'date'     => $date->toDateString(),
-            'sessions' => $sessions,
-        ];
+       $days[] = [
+    'date'     => $date->toDateString(),
+    'day_name' => $date->format('l'), 
+    'sessions' => $sessions,
+];
 
         $date->addDay();
     }
