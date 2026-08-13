@@ -1,47 +1,62 @@
 # Planora Backend
 
-## Back-End
+## Table of Contents
 
-### Prerequisites
+- [Prerequisites](#prerequisites)
+- [Setup & Installation](#setup--installation)
+  - [Run Without Docker](#run-without-docker)
+  - [Run With Docker](#run-with-docker)
+- [Useful Docker Commands](#useful-docker-commands)
+- [Authentication](#authentication)
+- [Courses](#courses)
+- [Tasks](#tasks)
+- [Notifications](#notifications)
+- [Data Export](#data-export)
+- [Security](#security)
+- [Branching Strategy](#branching-strategy)
 
-Make sure the following software is installed:
+---
+
+# Prerequisites
+
+## Without Docker
 
 - PHP 8.3+
 - Composer 2.9+
 - Laravel 12.x
 - MySQL 8.0+
 
+## With Docker
+
+- Docker
+- Docker Compose
+
 ---
 
-## Setup & Installation
+# Setup & Installation
+
+## Run Without Docker
 
 ### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/IEEE-ZSB-GP-T4/Backend.git
-```
-
-### 2. Navigate to the Backend Directory
-
-```bash
 cd Backend
 ```
 
-### 3. Install Dependencies
+### 2. Install Dependencies
 
 ```bash
 composer install
 ```
 
-### 4. Configure Environment Variables
-
-Copy the example environment file:
+### 3. Configure Environment Variables
 
 ```bash
 cp .env.example .env
 ```
 
-Update the database configuration in the `.env` file:
+Configure MySQL:
 
 ```env
 DB_CONNECTION=mysql
@@ -52,40 +67,152 @@ DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
 
-Make sure MySQL is running before continuing.
-
-### 5. Generate the Application Key
+### 4. Generate the Application Key
 
 ```bash
 php artisan key:generate
 ```
 
-### 6. Install API Authentication
-
-Laravel Sanctum is used for API authentication.
+### 5. Install API Authentication
 
 ```bash
 php artisan install:api
 ```
 
-This command installs the API authentication setup and creates the required Sanctum configuration and migrations.
+> Skip this step if Sanctum is already installed and configured.
 
-### 7. Run Database Migrations
+### 6. Run Migrations
 
 ```bash
 php artisan migrate
 ```
 
-### 8. Start the Development Server
+### 7. Start the Server
 
 ```bash
 php artisan serve
 ```
 
-The application will be available at:
+```text
+http://127.0.0.1:8000
+```
+
+---
+
+## Run With Docker
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/IEEE-ZSB-GP-T4/Backend.git
+cd Backend
+```
+
+### 2. Create the Environment File
+
+```bash
+cp .env.example .env
+```
+
+For Docker, the database host should be the MySQL service name:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=smart_study_planner
+DB_USERNAME=laravel
+DB_PASSWORD=laravel
+```
+
+> Make sure the database credentials match your `docker-compose.yml`.
+
+### 3. Build and Start Containers
+
+```bash
+docker compose up -d --build
+```
+
+### 4. Install Dependencies
+
+```bash
+docker compose exec app composer install
+```
+
+### 5. Generate Application Key
+
+```bash
+docker compose exec app php artisan key:generate
+```
+
+### 6. Run Migrations
+
+```bash
+docker compose exec app php artisan migrate
+```
+
+### 7. Clear Cache
+
+```bash
+docker compose exec app php artisan optimize:clear
+```
+
+Access the application using the port configured in `docker-compose.yml`, for example:
+
+```text
+http://localhost
+```
+
+or:
 
 ```text
 http://127.0.0.1:8000
+```
+
+---
+
+# Useful Docker Commands
+
+### Start
+
+```bash
+docker compose up -d
+```
+
+### Stop
+
+```bash
+docker compose down
+```
+
+### Rebuild
+
+```bash
+docker compose up -d --build
+```
+
+### Check Containers
+
+```bash
+docker compose ps
+```
+
+### View Logs
+
+```bash
+docker compose logs app
+```
+
+### Access Application Container
+
+```bash
+docker compose exec app bash
+```
+
+### Run Artisan Commands
+
+```bash
+docker compose exec app php artisan <command>
 ```
 
 ---
@@ -1513,6 +1640,246 @@ study_plans
 - **Warnings instead of silent failure.** If the available hours can't fit a task in before its deadline, it's reported in a `warnings` array rather than being dropped or scheduled late without explanation.
 - **The Fake and real generators return the exact same JSON shape** (`days` + `warnings`), so the frontend never needs to know which one is active.
 
+
+
+# Data Export
+
+The backend provides a data export system for the **Data Science team**.
+
+The system exports available database tables as CSV files, packages them into a ZIP file, and provides them through a protected API endpoint.
+
+## Data Export Flow
+
+```text
+MySQL Database
+      ↓
+CsvExportService
+      ↓
+CSV Files
+      ↓
+ZIP File
+      ↓
+GET /api/data-export/all
+      ↓
+Data Science Team
+      ↓
+Python + Pandas
+```
+
+## Automatic CSV Export
+
+The database export is scheduled to run every **5 minutes**.
+
+Laravel Scheduler:
+
+```php
+Schedule::command('database:export-csv')
+    ->everyFiveMinutes();
+```
+
+Server cron:
+
+```cron
+* * * * * cd /var/www/html/Backend && php artisan schedule:run >> /dev/null 2>&1
+```
+
+Check scheduled tasks:
+
+```bash
+php artisan schedule:list
+```
+
+## Currently Exported Tables
+
+```text
+users.csv
+courses.csv
+tasks.csv
+```
+
+> `notifications.csv` is not included yet because the Notifications backend is still under development.
+
+## Data Export API
+
+| Method | Endpoint | Authentication | Description |
+| ------ | -------- | -------------- | ----------- |
+| GET | `/api/data-export/all` | Yes | Download all available datasets as a ZIP file |
+
+### Request
+
+```http
+GET /api/data-export/all
+Accept: application/zip
+Authorization: Bearer YOUR_TOKEN
+```
+
+The endpoint requires a valid **Laravel Sanctum Bearer Token**.
+
+### Response
+
+The API returns:
+
+```text
+planora_dataset.zip
+```
+
+Containing:
+
+```text
+planora_dataset.zip
+│
+├── users.csv
+├── courses.csv
+└── tasks.csv
+```
+
+---
+
+# Data Science Team
+
+The Data Science team can download the complete dataset using a single request.
+
+A Python script is provided:
+
+```text
+test.py
+```
+
+## Install Python Dependencies
+
+Create a virtual environment:
+
+```bash
+python3 -m venv .venv
+```
+
+Activate it:
+
+```bash
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install requests pandas
+```
+
+## Run the Export Script
+
+```bash
+python test.py
+```
+
+The script:
+
+1. Sends a request to the Data Export API.
+2. Authenticates using a Sanctum Bearer Token.
+3. Downloads the ZIP file.
+4. Extracts the CSV files.
+5. Saves the files locally inside the `data/` directory.
+
+Result:
+
+```text
+data/
+├── users.csv
+├── courses.csv
+└── tasks.csv
+```
+
+## Data Export Architecture
+
+```text
+                    MySQL
+                      │
+                      ▼
+               Laravel Backend
+                      │
+                      ▼
+              CsvExportService
+                      │
+                      ▼
+                 CSV Files
+                      │
+                Every 5 Minutes
+                      │
+                      ▼
+              Data Export API
+                      │
+                      ▼
+          GET /api/data-export/all
+                      │
+                      ▼
+                 ZIP File
+                      │
+                      ▼
+           Data Science Team
+                      │
+                      ▼
+                 Python
+                      │
+                      ▼
+                  Pandas
+                      │
+                      ▼
+                ML / Analysis
+```
+
+## Updating the Dataset
+
+Run:
+
+```bash
+python test.py
+```
+
+Process:
+
+```text
+Run test.py
+    ↓
+GET /api/data-export/all
+    ↓
+Download latest ZIP
+    ↓
+Extract CSV files
+    ↓
+Replace local dataset
+    ↓
+Ready for Data Science / ML
+```
+
+---
+
+# Security
+
+The Data Export endpoint is protected using Laravel Sanctum:
+
+```php
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get(
+        '/data-export/all',
+        [DataExportController::class, 'downloadAll']
+    );
+});
+```
+
+Do not commit sensitive files or generated datasets to GitHub.
+
+Add to `.gitignore`:
+
+```gitignore
+.env
+.venv/
+/data/
+*.zip
+```
+
+The exported CSV files may contain real database data and must not be uploaded to GitHub.
+
+
+---
 
 # Branching Strategy
 
