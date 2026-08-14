@@ -3,6 +3,7 @@
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataExportController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\StudyPlanController;
@@ -118,5 +119,9 @@ Route::middleware('auth:sanctum')->group(function () {
         '/study-plan/{studyPlan}',
         [StudyPlanController::class, 'destroy']
     );
+
+
+    // ===================== Dashboard Routes =====================
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
 });
