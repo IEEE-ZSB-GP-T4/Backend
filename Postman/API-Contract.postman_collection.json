@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "02b062ad-6292-41fb-a5f8-8cde4de338a6",
+		"_postman_id": "b87306ce-010b-4732-a959-401e3227aee7",
 		"name": "API-Contract",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "45138695",
-		"_collection_link": "https://www.postman.com/codewithatwaa-1066/workspace/ieee-api-contract/collection/45138695-02b062ad-6292-41fb-a5f8-8cde4de338a6?action=share&source=collection_link&creator=45138695"
+		"_collection_link": "https://www.postman.com/codewithatwaa-1066/workspace/ieee-api-contract/collection/45138695-b87306ce-010b-4732-a959-401e3227aee7?action=share&source=collection_link&creator=45138695"
 	},
 	"item": [
 		{
@@ -36,17 +36,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/register",
-							"protocol": "http",
+							"raw": "{{base_url}}/register",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"register"
 							]
 						},
@@ -79,25 +73,19 @@
 									}
 								},
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/register",
-									"protocol": "http",
+									"raw": "{{base_url}}/register",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"register"
 									]
 								}
 							},
 							"_postman_previewlanguage": "Text",
-							"header": null,
+							"header": [],
 							"cookie": [],
-							"body": null
+							"body": ""
 						}
 					]
 				},
@@ -137,17 +125,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/login",
-							"protocol": "http",
+							"raw": "{{base_url}}/login",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"login"
 							]
 						},
@@ -169,25 +151,19 @@
 									}
 								},
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/login",
-									"protocol": "http",
+									"raw": "{{base_url}}/login",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"login"
 									]
 								}
 							},
 							"_postman_previewlanguage": "Text",
-							"header": null,
+							"header": [],
 							"cookie": [],
-							"body": null
+							"body": ""
 						}
 					]
 				},
@@ -227,17 +203,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/logout",
-							"protocol": "http",
+							"raw": "{{base_url}}/logout",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"logout"
 							]
 						}
@@ -269,25 +239,19 @@
 									}
 								},
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/logout",
-									"protocol": "http",
+									"raw": "{{base_url}}/logout",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"logout"
 									]
 								}
 							},
 							"_postman_previewlanguage": "Text",
-							"header": null,
+							"header": [],
 							"cookie": [],
-							"body": null
+							"body": ""
 						}
 					]
 				},
@@ -330,17 +294,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/user",
-							"protocol": "http",
+							"raw": "{{base_url}}/user",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"user"
 							]
 						}
@@ -356,11 +314,62 @@
 								}
 							},
 							"_postman_previewlanguage": "Text",
-							"header": null,
+							"header": [],
 							"cookie": [],
 							"body": "{\n    \"status\": 200,\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"Mohamed\",\n        \"email\": \"mohamed@gmail.com\"\n    }\n}"
 						}
 					]
+				},
+				{
+					"name": "Login (sets token)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has correct structure and saves token\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('status');",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"    pm.expect(jsonData.data).to.have.property('token');",
+									"    pm.collectionVariables.set('token', jsonData.data.token);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"notiftest@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -394,17 +403,11 @@
 							}
 						],
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/courses",
-							"protocol": "http",
+							"raw": "{{base_url}}/courses",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"courses"
 							]
 						}
@@ -415,27 +418,12 @@
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/courses",
-									"protocol": "http",
+									"raw": "{{base_url}}/courses",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"courses"
 									]
 								}
@@ -494,17 +482,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/courses/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/courses/1",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"courses",
 								"1"
 							]
@@ -517,17 +499,11 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/courses/1",
-									"protocol": "http",
+									"raw": "{{base_url}}/courses/1",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"courses",
 										"1"
 									]
@@ -579,7 +555,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "2|gFHjMxZ2eTqatQKnRmvBaxRp83gvIr50Aat0maYm47ab23ac",
+									"value": "{{authorization_secret}}",
 									"type": "string"
 								}
 							]
@@ -602,17 +578,11 @@
 							"raw": "{\n    \"name\": \"Data structure\",\n    \"instructor\": \"Dr. Ahmed\",\n    \"code\": \"20\"\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/courses",
-							"protocol": "http",
+							"raw": "{{base_url}}/courses",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"courses"
 							]
 						}
@@ -639,17 +609,11 @@
 									"raw": "{\n    \"name\": \"Data Base\",\n    \"instructor\": \"Dr. Atwaa\",\n    \"code\": \"IS201\"\n}"
 								},
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/courses",
-									"protocol": "http",
+									"raw": "{{base_url}}/courses",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"courses"
 									]
 								}
@@ -728,17 +692,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/courses/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/courses/1",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"courses",
 								"1"
 							]
@@ -771,17 +729,11 @@
 									}
 								},
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/courses/1",
-									"protocol": "http",
+									"raw": "{{base_url}}/courses/1",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"courses",
 										"1"
 									]
@@ -845,17 +797,11 @@
 							"raw": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Laravel\",\n            \"color\": \"#6366F1\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Database\",\n            \"color\": \"#10B981\"\n        }\n    ]\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/courses/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/courses/1",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"courses",
 								"1"
 							]
@@ -872,17 +818,11 @@
 									"raw": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Laravel\",\n            \"color\": \"#6366F1\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Database\",\n            \"color\": \"#10B981\"\n        }\n    ]\n}"
 								},
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/courses/1",
-									"protocol": "http",
+									"raw": "{{base_url}}/courses/1",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"courses",
 										"1"
 									]
@@ -942,7 +882,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "2|NuK1gWaOAKYX2CtIevQ9O3Glgy7yYlyOS1m27tbwf104f2d8",
+									"value": "{{authorization_secret}}",
 									"type": "string"
 								}
 							]
@@ -954,17 +894,11 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/tasks/",
-							"protocol": "http",
+							"raw": "{{base_url}}/tasks/",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"tasks",
 								""
 							]
@@ -976,22 +910,12 @@
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/tasks/",
-									"protocol": "http",
+									"raw": "{{base_url}}/tasks/",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"tasks",
 										""
 									]
@@ -1058,17 +982,11 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/tasks/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/tasks/1",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"tasks",
 								"1"
 							]
@@ -1080,22 +998,12 @@
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/tasks/1",
-									"protocol": "http",
+									"raw": "{{base_url}}/tasks/1",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"tasks",
 										"1"
 									]
@@ -1147,7 +1055,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "2|gFHjMxZ2eTqatQKnRmvBaxRp83gvIr50Aat0maYm47ab23ac",
+									"value": "{{authorization_secret}}",
 									"type": "string"
 								}
 							]
@@ -1175,17 +1083,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/tasks",
-							"protocol": "http",
+							"raw": "{{base_url}}/tasks",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"tasks"
 							]
 						}
@@ -1217,17 +1119,11 @@
 									}
 								},
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/tasks",
-									"protocol": "http",
+									"raw": "{{base_url}}/tasks",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"tasks"
 									]
 								}
@@ -1295,37 +1191,17 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/tasks/2",
-							"protocol": "http",
+							"raw": "{{base_url}}/tasks/2",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"tasks",
 								"2"
 							]
 						}
 					},
 					"response": [
-						{
-							"name": "edit-task-response",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": ""
-								}
-							},
-							"_postman_previewlanguage": "Text",
-							"header": null,
-							"cookie": [],
-							"body": "{\n    \"status\": 200,\n    \"message\": \"Task updated successfully.\",\n    \"data\": {\n        \"id\": 1,\n        \"status\": \"In Progress\"\n    }\n}"
-						},
 						{
 							"name": "edit-task",
 							"originalRequest": {
@@ -1341,17 +1217,11 @@
 									}
 								},
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/tasks/2",
-									"protocol": "http",
+									"raw": "{{base_url}}/tasks/2",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"tasks",
 										"2"
 									]
@@ -1405,9 +1275,9 @@
 							"raw": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Laravel\",\n            \"color\": \"#6366F1\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Database\",\n            \"color\": \"#10B981\"\n        }\n    ]\n}"
 						},
 						"url": {
-							"raw": "{{http://127.0.0.1:8000/api}}/tasks/destroy",
+							"raw": "{{base_url}}/tasks/destroy",
 							"host": [
-								"{{http://127.0.0.1:8000/api}}"
+								"{{base_url}}"
 							],
 							"path": [
 								"tasks",
@@ -1426,7 +1296,7 @@
 								}
 							},
 							"_postman_previewlanguage": "Text",
-							"header": null,
+							"header": [],
 							"cookie": [],
 							"body": "{\n    \"status\": 200,\n    \"message\": \"Task deleted successfully.\"\n}"
 						}
@@ -1448,17 +1318,11 @@
 						"method": "PATCH",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/tasks/1/complete",
-							"protocol": "http",
+							"raw": "{{base_url}}/tasks/1/complete",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"tasks",
 								"1",
 								"complete"
@@ -1472,17 +1336,11 @@
 								"method": "PATCH",
 								"header": [],
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/tasks/1/complete",
-									"protocol": "http",
+									"raw": "{{base_url}}/tasks/1/complete",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"tasks",
 										"1",
 										"complete"
@@ -1543,17 +1401,11 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/tasks/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/tasks/1",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"tasks",
 								"1"
 							]
@@ -1566,17 +1418,11 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/tasks/1",
-									"protocol": "http",
+									"raw": "{{base_url}}/tasks/1",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"tasks",
 										"1"
 									]
@@ -1636,17 +1482,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/tasks/upcoming-deadlines",
-							"protocol": "http",
+							"raw": "{{base_url}}/tasks/upcoming-deadlines",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"tasks",
 								"upcoming-deadlines"
 							]
@@ -1729,7 +1569,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "2|gFHjMxZ2eTqatQKnRmvBaxRp83gvIr50Aat0maYm47ab23ac",
+									"value": "{{authorization_secret}}",
 									"type": "string"
 								}
 							]
@@ -1741,17 +1581,11 @@
 							"raw": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Laravel\",\n            \"color\": \"#6366F1\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Database\",\n            \"color\": \"#10B981\"\n        }\n    ]\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/dashboard",
-							"protocol": "http",
+							"raw": "{{base_url}}/dashboard",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"dashboard"
 							]
 						}
@@ -1762,10 +1596,6 @@
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Laravel\",\n            \"color\": \"#6366F1\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Database\",\n            \"color\": \"#10B981\"\n        }\n    ]\n}"
-								},
 								"url": {
 									"raw": "http://127.0.0.1:8000/api/dashboard",
 									"protocol": "http",
@@ -1784,7 +1614,7 @@
 							},
 							"status": "OK",
 							"code": 200,
-							"_postman_previewlanguage": "",
+							"_postman_previewlanguage": "Text",
 							"header": [
 								{
 									"key": "Host",
@@ -1826,366 +1656,52 @@
 			"name": "AI-Study-Planner",
 			"item": [
 				{
-					"name": "generate-study-plan",
+					"name": "Get Tasks for Checklist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains courses with tasks, and saves task IDs\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"    const allTasks = jsonData.data.flatMap(c => c.tasks || []);",
+									"    if (allTasks.length > 0) pm.collectionVariables.set('task_id_1', allTasks[0].id);",
+									"    if (allTasks.length > 1) pm.collectionVariables.set('task_id_2', allTasks[1].id);",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "2|NuK1gWaOAKYX2CtIevQ9O3Glgy7yYlyOS1m27tbwf104f2d8",
+									"value": "{{token}}",
 									"type": "string"
 								}
 							]
 						},
-						"method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"available_hours\": 4,\n  \"task_ids\": [1,2]\n}"
-						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/study-plan",
-							"protocol": "http",
+							"raw": "{{base_url}}/study-plan/tasks",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
-								"study-plan"
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "generate-study-plan",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Accept",
-										"value": "application/json",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"available_hours\": 4,\n    \"task_ids\": [1]\n}"
-								},
-								"url": {
-									"raw": "http://127.0.0.1:8000/api/study-plan",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "8000",
-									"path": [
-										"api",
-										"study-plan"
-									]
-								}
-							},
-							"status": "Created",
-							"code": 201,
-							"_postman_previewlanguage": "Text",
-							"header": [
-								{
-									"key": "Host",
-									"value": "127.0.0.1:8000"
-								},
-								{
-									"key": "Connection",
-									"value": "close"
-								},
-								{
-									"key": "X-Powered-By",
-									"value": "PHP/8.3.33"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, private"
-								},
-								{
-									"key": "Date",
-									"value": "Thu, 13 Aug 2026 17:46:31 GMT"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"status\": 201,\n    \"message\": \"Study plan generated successfully\",\n    \"data\": {\n        \"id\": 2,\n        \"available_hours\": 4,\n        \"generated_plan\": {\n            \"days\": [\n                {\n                    \"date\": \"2026-08-13\",\n                    \"day_name\": \"Thursday\",\n                    \"sessions\": [\n                        {\n                            \"task_id\": 1,\n                            \"title\": \"SQL Joins\",\n                            \"hours\": 2.5\n                        }\n                    ]\n                },\n                {\n                    \"date\": \"2026-08-14\",\n                    \"day_name\": \"Friday\",\n                    \"sessions\": []\n                },\n                {\n                    \"date\": \"2026-08-15\",\n                    \"day_name\": \"Saturday\",\n                    \"sessions\": []\n                }\n            ],\n            \"warnings\": []\n        },\n        \"created_at\": \"2026-08-13T17:46:31.000000Z\"\n    }\n}"
-						}
-					]
-				},
-				{
-					"name": "latest-study-plan",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authorization_secret}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Laravel\",\n            \"color\": \"#6366F1\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Database\",\n            \"color\": \"#10B981\"\n        }\n    ]\n}"
-						},
-						"url": {
-							"raw": "http://127.0.0.1:8000/api/study-plan",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "8000",
-							"path": [
-								"api",
-								"study-plan"
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "study-plans",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Laravel\",\n            \"color\": \"#6366F1\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Database\",\n            \"color\": \"#10B981\"\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "http://127.0.0.1:8000/api/study-plan",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "8000",
-									"path": [
-										"api",
-										"study-plan"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "Text",
-							"header": [
-								{
-									"key": "Host",
-									"value": "127.0.0.1:8000"
-								},
-								{
-									"key": "Connection",
-									"value": "close"
-								},
-								{
-									"key": "X-Powered-By",
-									"value": "PHP/8.3.33"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, private"
-								},
-								{
-									"key": "Date",
-									"value": "Thu, 13 Aug 2026 17:55:46 GMT"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"status\": 200,\n    \"message\": \"Study plan retrieved successfully\",\n    \"data\": {\n        \"id\": 3,\n        \"available_hours\": 15,\n        \"generated_plan\": {\n            \"days\": [\n                {\n                    \"date\": \"2026-08-13\",\n                    \"day_name\": \"Thursday\",\n                    \"sessions\": [\n                        {\n                            \"hours\": 2.5,\n                            \"title\": \"SQL Joins\",\n                            \"task_id\": 1\n                        }\n                    ]\n                },\n                {\n                    \"date\": \"2026-08-14\",\n                    \"day_name\": \"Friday\",\n                    \"sessions\": []\n                },\n                {\n                    \"date\": \"2026-08-15\",\n                    \"day_name\": \"Saturday\",\n                    \"sessions\": []\n                }\n            ],\n            \"warnings\": []\n        },\n        \"created_at\": \"2026-08-13T17:47:41.000000Z\"\n    }\n}"
-						}
-					]
-				},
-				{
-					"name": "study-plan-history",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "2|NuK1gWaOAKYX2CtIevQ9O3Glgy7yYlyOS1m27tbwf104f2d8",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Laravel\",\n            \"color\": \"#6366F1\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Database\",\n            \"color\": \"#10B981\"\n        }\n    ]\n}"
-						},
-						"url": {
-							"raw": "http://127.0.0.1:8000/api/study-plan/history",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "8000",
-							"path": [
-								"api",
-								"study-plan",
-								"history"
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "study-specific-plan",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Laravel\",\n            \"color\": \"#6366F1\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Database\",\n            \"color\": \"#10B981\"\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "http://127.0.0.1:8000/api/study-plan/history",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "8000",
-									"path": [
-										"api",
-										"study-plan",
-										"history"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "Text",
-							"header": [
-								{
-									"key": "Host",
-									"value": "127.0.0.1:8000"
-								},
-								{
-									"key": "Connection",
-									"value": "close"
-								},
-								{
-									"key": "X-Powered-By",
-									"value": "PHP/8.3.33"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, private"
-								},
-								{
-									"key": "Date",
-									"value": "Thu, 13 Aug 2026 17:56:54 GMT"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"status\": 200,\n    \"message\": \"Study plan history retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": 3,\n            \"available_hours\": 15,\n            \"generated_plan\": {\n                \"days\": [\n                    {\n                        \"date\": \"2026-08-13\",\n                        \"day_name\": \"Thursday\",\n                        \"sessions\": [\n                            {\n                                \"hours\": 2.5,\n                                \"title\": \"SQL Joins\",\n                                \"task_id\": 1\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-14\",\n                        \"day_name\": \"Friday\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-15\",\n                        \"day_name\": \"Saturday\",\n                        \"sessions\": []\n                    }\n                ],\n                \"warnings\": []\n            },\n            \"created_at\": \"2026-08-13T17:47:41.000000Z\"\n        },\n        {\n            \"id\": 2,\n            \"available_hours\": 4,\n            \"generated_plan\": {\n                \"days\": [\n                    {\n                        \"date\": \"2026-08-13\",\n                        \"day_name\": \"Thursday\",\n                        \"sessions\": [\n                            {\n                                \"hours\": 2.5,\n                                \"title\": \"SQL Joins\",\n                                \"task_id\": 1\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-14\",\n                        \"day_name\": \"Friday\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-15\",\n                        \"day_name\": \"Saturday\",\n                        \"sessions\": []\n                    }\n                ],\n                \"warnings\": []\n            },\n            \"created_at\": \"2026-08-13T17:46:31.000000Z\"\n        },\n        {\n            \"id\": 1,\n            \"available_hours\": 4,\n            \"generated_plan\": {\n                \"days\": [\n                    {\n                        \"date\": \"2026-08-13\",\n                        \"day_name\": \"Thursday\",\n                        \"sessions\": [\n                            {\n                                \"hours\": 2.5,\n                                \"title\": \"SQL Joins\",\n                                \"task_id\": 1\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-14\",\n                        \"day_name\": \"Friday\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-15\",\n                        \"day_name\": \"Saturday\",\n                        \"sessions\": []\n                    }\n                ],\n                \"warnings\": []\n            },\n            \"created_at\": \"2026-08-13T17:45:53.000000Z\"\n        }\n    ]\n}"
-						}
-					]
-				},
-				{
-					"name": "study-plan-tasks",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authorization_secret}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Laravel\",\n            \"color\": \"#6366F1\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Database\",\n            \"color\": \"#10B981\"\n        }\n    ]\n}"
-						},
-						"url": {
-							"raw": "http://127.0.0.1:8000/api/study-plan/tasks",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "8000",
-							"path": [
-								"api",
 								"study-plan",
 								"tasks"
 							]
@@ -2193,26 +1709,21 @@
 					},
 					"response": [
 						{
-							"name": "study-plan-tasks",
+							"name": "Get Tasks for Checklist.example",
 							"originalRequest": {
 								"method": "GET",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Laravel\",\n            \"color\": \"#6366F1\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Database\",\n            \"color\": \"#10B981\"\n        }\n    ]\n}"
-								},
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/study-plan/tasks",
-									"protocol": "http",
+									"raw": "{{base_url}}/study-plan/tasks",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
 										"study-plan",
 										"tasks"
 									]
@@ -2232,7 +1743,7 @@
 								},
 								{
 									"key": "X-Powered-By",
-									"value": "PHP/8.3.33"
+									"value": "PHP/8.4.23"
 								},
 								{
 									"key": "Cache-Control",
@@ -2240,7 +1751,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Thu, 13 Aug 2026 17:57:57 GMT"
+									"value": "Fri, 14 Aug 2026 18:21:06 GMT"
 								},
 								{
 									"key": "Content-Type",
@@ -2252,92 +1763,437 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"status\": 200,\n    \"message\": \"Tasks retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": 7,\n            \"name\": \"Data structure\",\n            \"code\": \"20\",\n            \"tasks\": []\n        },\n        {\n            \"id\": 5,\n            \"name\": \"Data structure\",\n            \"code\": \"cs203\",\n            \"tasks\": []\n        },\n        {\n            \"id\": 3,\n            \"name\": \"System Design\",\n            \"code\": \"DS201\",\n            \"tasks\": []\n        },\n        {\n            \"id\": 1,\n            \"name\": \"System Arch\",\n            \"code\": \"IS2102\",\n            \"tasks\": [\n                {\n                    \"id\": 1,\n                    \"course_id\": 1,\n                    \"title\": \"SQL Joins\",\n                    \"description\": \"Study INNER JOIN, LEFT JOIN and RIGHT JOIN\",\n                    \"deadline\": \"2026-08-15T18:00:00.000000Z\",\n                    \"estimated_hours\": \"2.50\",\n                    \"priority\": \"high\",\n                    \"status\": \"pending\",\n                    \"completed_at\": null,\n                    \"reminder_sent_at\": null,\n                    \"second_reminder_sent_at\": null,\n                    \"created_at\": \"2026-08-12T18:05:50.000000Z\",\n                    \"updated_at\": \"2026-08-12T18:05:50.000000Z\"\n                }\n            ]\n        },\n        {\n            \"id\": 4,\n            \"name\": \"IoT\",\n            \"code\": \"It201\",\n            \"tasks\": []\n        }\n    ]\n}"
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Tasks retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": 2,\n            \"name\": \"Test Course\",\n            \"code\": \"NT101\",\n            \"tasks\": [\n                {\n                    \"id\": 5,\n                    \"course_id\": 2,\n                    \"title\": \"Quick Quiz Review\",\n                    \"description\": null,\n                    \"deadline\": \"2026-08-14T10:00:00.000000Z\",\n                    \"estimated_hours\": \"6.00\",\n                    \"priority\": \"high\",\n                    \"status\": \"pending\",\n                    \"completed_at\": null,\n                    \"reminder_sent_at\": null,\n                    \"second_reminder_sent_at\": null,\n                    \"created_at\": \"2026-08-13T04:17:00.000000Z\",\n                    \"updated_at\": \"2026-08-13T04:17:00.000000Z\"\n                },\n                {\n                    \"id\": 6,\n                    \"course_id\": 2,\n                    \"title\": \"Read Chapter 3\",\n                    \"description\": null,\n                    \"deadline\": \"2026-08-18T18:00:00.000000Z\",\n                    \"estimated_hours\": \"2.00\",\n                    \"priority\": \"low\",\n                    \"status\": \"pending\",\n                    \"completed_at\": null,\n                    \"reminder_sent_at\": null,\n                    \"second_reminder_sent_at\": null,\n                    \"created_at\": \"2026-08-13T04:17:57.000000Z\",\n                    \"updated_at\": \"2026-08-13T04:17:57.000000Z\"\n                },\n                {\n                    \"id\": 4,\n                    \"course_id\": 2,\n                    \"title\": \"Task B - The Next One\",\n                    \"description\": null,\n                    \"deadline\": \"2026-08-20T12:00:00.000000Z\",\n                    \"estimated_hours\": \"3.00\",\n                    \"priority\": \"high\",\n                    \"status\": \"pending\",\n                    \"completed_at\": null,\n                    \"reminder_sent_at\": null,\n                    \"second_reminder_sent_at\": null,\n                    \"created_at\": \"2026-08-11T20:02:17.000000Z\",\n                    \"updated_at\": \"2026-08-11T20:02:17.000000Z\"\n                }\n            ]\n        }\n    ]\n}"
 						}
 					]
 				},
 				{
-					"name": "delete-study-plan",
+					"name": "Generate Study Plan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response contains a generated plan with days and warnings\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.generated_plan).to.have.property('days');",
+									"    pm.expect(jsonData.data.generated_plan).to.have.property('warnings');",
+									"    pm.collectionVariables.set('study_plan_id', jsonData.data.id);",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{authorization_secret}}",
+									"value": "{{token}}",
 									"type": "string"
 								}
 							]
 						},
-						"method": "DELETE",
+						"method": "POST",
 						"header": [
 							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"key": "Content-Type",
+								"value": "application/json"
 							},
 							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
+								"key": "Accept",
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"available_hours\": 15,\n    \"task_ids\": [1]\n}"
+							"raw": "{\n    \"available_hours\": 3,\n    \"task_ids\": [{{task_id_1}}, {{task_id_2}}]\n}"
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/study-plan/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/study-plan",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
-								"study-plan",
-								"1"
+								"study-plan"
 							]
 						}
 					},
 					"response": [
 						{
-							"name": "delete-study-plan",
+							"name": "Generate Study Plan.example",
 							"originalRequest": {
-								"method": "DELETE",
+								"method": "POST",
 								"header": [
 									{
-										"key": "Accept",
-										"value": "application/json",
-										"type": "text"
+										"key": "Content-Type",
+										"value": "application/json"
 									},
 									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
+										"key": "Accept",
+										"value": "application/json"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"available_hours\": 15,\n    \"task_ids\": [1]\n}"
+									"raw": "{\n    \"available_hours\": 3,\n    \"task_ids\": [{{task_id_1}}, {{task_id_2}}]\n}"
 								},
 								"url": {
-									"raw": "http://127.0.0.1:8000/api/study-plan/1",
-									"protocol": "http",
+									"raw": "{{base_url}}/study-plan",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{base_url}}"
 									],
-									"port": "8000",
 									"path": [
-										"api",
-										"study-plan",
-										"1"
+										"study-plan"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.23"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 18:28:21 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 201,\n    \"message\": \"Study plan generated successfully\",\n    \"data\": {\n        \"id\": 6,\n        \"available_hours\": 3,\n        \"generated_plan\": {\n            \"days\": [\n                {\n                    \"date\": \"2026-08-14\",\n                    \"day_name\": \"Friday\",\n                    \"sessions\": [\n                        {\n                            \"task_id\": 5,\n                            \"title\": \"Quick Quiz Review\",\n                            \"hours\": 3\n                        }\n                    ]\n                },\n                {\n                    \"date\": \"2026-08-15\",\n                    \"day_name\": \"Saturday\",\n                    \"sessions\": [\n                        {\n                            \"task_id\": 6,\n                            \"title\": \"Read Chapter 3\",\n                            \"hours\": 2\n                        }\n                    ]\n                },\n                {\n                    \"date\": \"2026-08-16\",\n                    \"day_name\": \"Sunday\",\n                    \"sessions\": []\n                },\n                {\n                    \"date\": \"2026-08-17\",\n                    \"day_name\": \"Monday\",\n                    \"sessions\": []\n                },\n                {\n                    \"date\": \"2026-08-18\",\n                    \"day_name\": \"Tuesday\",\n                    \"sessions\": []\n                }\n            ],\n            \"warnings\": [\n                {\n                    \"task_id\": 5,\n                    \"title\": \"Quick Quiz Review\",\n                    \"hours_missing\": 3,\n                    \"message\": \"\\\"Quick Quiz Review\\\" won't be fully covered before its deadline with the available hours.\"\n                }\n            ]\n        },\n        \"created_at\": \"2026-08-14T18:28:21.000000Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Generate Study Plan - Invalid Hours (Expect 422)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 422 (validation failed)\", function () {",
+									"    pm.response.to.have.status(422);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"available_hours\": 20,\n    \"task_ids\": [{{task_id_1}}]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/study-plan",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"study-plan"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Generate Study Plan - Invalid Hours (Expect 422).example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"available_hours\": 20,\n    \"task_ids\": [{{task_id_1}}]\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/study-plan",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"study-plan"
+									]
+								}
+							},
+							"status": "Unprocessable Content",
+							"code": 422,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.23"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 18:28:51 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 422,\n    \"message\": \"Validation failed\",\n    \"data\": {\n        \"available_hours\": [\n            \"The maximum study time is 16 hours per day.\"\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Generate Study Plan - Empty Task List (Expect 422)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 422 (validation failed)\", function () {",
+									"    pm.response.to.have.status(422);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"available_hours\": 3,\n    \"task_ids\": []\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/study-plan",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"study-plan"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Generate Study Plan - Empty Task List (Expect 422).example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"available_hours\": 3,\n    \"task_ids\": []\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/study-plan",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"study-plan"
+									]
+								}
+							},
+							"status": "Unprocessable Content",
+							"code": 422,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.23"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 18:29:46 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 422,\n    \"message\": \"Validation failed\",\n    \"data\": {\n        \"task_ids\": [\n            \"Please select at least one task.\"\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Latest Study Plan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('generated_plan');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/study-plan",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"study-plan"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Latest Study Plan.example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/study-plan",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"study-plan"
 									]
 								}
 							},
@@ -2355,7 +2211,7 @@
 								},
 								{
 									"key": "X-Powered-By",
-									"value": "PHP/8.3.33"
+									"value": "PHP/8.4.23"
 								},
 								{
 									"key": "Cache-Control",
@@ -2363,7 +2219,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Thu, 13 Aug 2026 18:00:20 GMT"
+									"value": "Fri, 14 Aug 2026 18:30:06 GMT"
 								},
 								{
 									"key": "Content-Type",
@@ -2375,7 +2231,1233 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"status\": 200,\n    \"message\": \"Study plan deleted successfully\",\n    \"data\": null\n}"
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Study plan retrieved successfully\",\n    \"data\": {\n        \"id\": 6,\n        \"available_hours\": 3,\n        \"generated_plan\": {\n            \"days\": [\n                {\n                    \"date\": \"2026-08-14\",\n                    \"day_name\": \"Friday\",\n                    \"sessions\": [\n                        {\n                            \"task_id\": 5,\n                            \"title\": \"Quick Quiz Review\",\n                            \"hours\": 3\n                        }\n                    ]\n                },\n                {\n                    \"date\": \"2026-08-15\",\n                    \"day_name\": \"Saturday\",\n                    \"sessions\": [\n                        {\n                            \"task_id\": 6,\n                            \"title\": \"Read Chapter 3\",\n                            \"hours\": 2\n                        }\n                    ]\n                },\n                {\n                    \"date\": \"2026-08-16\",\n                    \"day_name\": \"Sunday\",\n                    \"sessions\": []\n                },\n                {\n                    \"date\": \"2026-08-17\",\n                    \"day_name\": \"Monday\",\n                    \"sessions\": []\n                },\n                {\n                    \"date\": \"2026-08-18\",\n                    \"day_name\": \"Tuesday\",\n                    \"sessions\": []\n                }\n            ],\n            \"warnings\": [\n                {\n                    \"task_id\": 5,\n                    \"title\": \"Quick Quiz Review\",\n                    \"hours_missing\": 3,\n                    \"message\": \"\\\"Quick Quiz Review\\\" won't be fully covered before its deadline with the available hours.\"\n                }\n            ]\n        },\n        \"created_at\": \"2026-08-14T18:28:21.000000Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Latest Study Plan - Not Found (Expect 404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('generated_plan');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/study-plan",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"study-plan"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Latest Study Plan - Not Found (Expect 404).example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/study-plan",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"study-plan"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.23"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 19:10:40 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 404,\n    \"message\": \"No study plan found yet\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Study Plan History",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response data is an array of plans\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/study-plan/history",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"study-plan",
+								"history"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Study Plan History.example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/study-plan/history",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"study-plan",
+										"history"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.23"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 18:30:29 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Study plan history retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": 6,\n            \"available_hours\": 3,\n            \"generated_plan\": {\n                \"days\": [\n                    {\n                        \"date\": \"2026-08-14\",\n                        \"day_name\": \"Friday\",\n                        \"sessions\": [\n                            {\n                                \"task_id\": 5,\n                                \"title\": \"Quick Quiz Review\",\n                                \"hours\": 3\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-15\",\n                        \"day_name\": \"Saturday\",\n                        \"sessions\": [\n                            {\n                                \"task_id\": 6,\n                                \"title\": \"Read Chapter 3\",\n                                \"hours\": 2\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-16\",\n                        \"day_name\": \"Sunday\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-17\",\n                        \"day_name\": \"Monday\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-18\",\n                        \"day_name\": \"Tuesday\",\n                        \"sessions\": []\n                    }\n                ],\n                \"warnings\": [\n                    {\n                        \"task_id\": 5,\n                        \"title\": \"Quick Quiz Review\",\n                        \"hours_missing\": 3,\n                        \"message\": \"\\\"Quick Quiz Review\\\" won't be fully covered before its deadline with the available hours.\"\n                    }\n                ]\n            },\n            \"created_at\": \"2026-08-14T18:28:21.000000Z\"\n        },\n        {\n            \"id\": 5,\n            \"available_hours\": 3,\n            \"generated_plan\": {\n                \"days\": [\n                    {\n                        \"date\": \"2026-08-13\",\n                        \"day_name\": \"Thursday\",\n                        \"sessions\": [\n                            {\n                                \"task_id\": 5,\n                                \"title\": \"Quick Quiz Review\",\n                                \"hours\": 3\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-14\",\n                        \"day_name\": \"Friday\",\n                        \"sessions\": [\n                            {\n                                \"task_id\": 5,\n                                \"title\": \"Quick Quiz Review\",\n                                \"hours\": 3\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-15\",\n                        \"day_name\": \"Saturday\",\n                        \"sessions\": [\n                            {\n                                \"task_id\": 6,\n                                \"title\": \"Read Chapter 3\",\n                                \"hours\": 2\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-16\",\n                        \"day_name\": \"Sunday\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-17\",\n                        \"day_name\": \"Monday\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-18\",\n                        \"day_name\": \"Tuesday\",\n                        \"sessions\": []\n                    }\n                ],\n                \"warnings\": []\n            },\n            \"created_at\": \"2026-08-13T11:01:37.000000Z\"\n        },\n        {\n            \"id\": 4,\n            \"available_hours\": 3,\n            \"generated_plan\": {\n                \"days\": [\n                    {\n                        \"date\": \"2026-08-13\",\n                        \"day_name\": \"Thursday\",\n                        \"sessions\": [\n                            {\n                                \"task_id\": 6,\n                                \"title\": \"Read Chapter 3\",\n                                \"hours\": 2\n                            },\n                            {\n                                \"task_id\": 4,\n                                \"title\": \"Task B - The Next One\",\n                                \"hours\": 1\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-14\",\n                        \"day_name\": \"Friday\",\n                        \"sessions\": [\n                            {\n                                \"task_id\": 4,\n                                \"title\": \"Task B - The Next One\",\n                                \"hours\": 2\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-15\",\n                        \"day_name\": \"Saturday\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-16\",\n                        \"day_name\": \"Sunday\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-17\",\n                        \"day_name\": \"Monday\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-18\",\n                        \"day_name\": \"Tuesday\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-19\",\n                        \"day_name\": \"Wednesday\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-20\",\n                        \"day_name\": \"Thursday\",\n                        \"sessions\": []\n                    }\n                ],\n                \"warnings\": []\n            },\n            \"created_at\": \"2026-08-13T10:22:54.000000Z\"\n        },\n        {\n            \"id\": 3,\n            \"available_hours\": 3,\n            \"generated_plan\": {\n                \"days\": [\n                    {\n                        \"date\": \"2026-08-13\",\n                        \"sessions\": [\n                            {\n                                \"task_id\": 6,\n                                \"title\": \"Read Chapter 3\",\n                                \"hours\": 2\n                            },\n                            {\n                                \"task_id\": 4,\n                                \"title\": \"Task B - The Next One\",\n                                \"hours\": 1\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-14\",\n                        \"sessions\": [\n                            {\n                                \"task_id\": 4,\n                                \"title\": \"Task B - The Next One\",\n                                \"hours\": 2\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-15\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-16\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-17\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-18\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-19\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-20\",\n                        \"sessions\": []\n                    }\n                ],\n                \"warnings\": []\n            },\n            \"created_at\": \"2026-08-13T04:49:01.000000Z\"\n        },\n        {\n            \"id\": 2,\n            \"available_hours\": 2,\n            \"generated_plan\": {\n                \"days\": [\n                    {\n                        \"date\": \"2026-08-13\",\n                        \"sessions\": [\n                            {\n                                \"task_id\": 5,\n                                \"title\": \"Quick Quiz Review\",\n                                \"hours\": 2\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-14\",\n                        \"sessions\": [\n                            {\n                                \"task_id\": 5,\n                                \"title\": \"Quick Quiz Review\",\n                                \"hours\": 2\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-15\",\n                        \"sessions\": [\n                            {\n                                \"task_id\": 6,\n                                \"title\": \"Read Chapter 3\",\n                                \"hours\": 2\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-16\",\n                        \"sessions\": [\n                            {\n                                \"task_id\": 4,\n                                \"title\": \"Task B - The Next One\",\n                                \"hours\": 2\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-17\",\n                        \"sessions\": [\n                            {\n                                \"task_id\": 4,\n                                \"title\": \"Task B - The Next One\",\n                                \"hours\": 1\n                            }\n                        ]\n                    },\n                    {\n                        \"date\": \"2026-08-18\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-19\",\n                        \"sessions\": []\n                    },\n                    {\n                        \"date\": \"2026-08-20\",\n                        \"sessions\": []\n                    }\n                ],\n                \"warnings\": [\n                    {\n                        \"task_id\": 5,\n                        \"title\": \"Quick Quiz Review\",\n                        \"hours_missing\": 2,\n                        \"message\": \"\\\"Quick Quiz Review\\\" won't be fully covered before its deadline with the available hours.\"\n                    }\n                ]\n            },\n            \"created_at\": \"2026-08-13T04:22:25.000000Z\"\n        }\n    ]\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Get All Notifications",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('status');",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"    if (jsonData.data.length > 0) {",
+									"        pm.collectionVariables.set('notification_id', jsonData.data[0].id);",
+									"    }",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notifications",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get All Notifications.example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/notifications",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"notifications"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.23"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 18:40:33 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Notifications retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": 7,\n            \"user_id\": 3,\n            \"title\": \"Test Notification\",\n            \"body\": \"This is a test notification\",\n            \"is_read\": false,\n            \"created_at\": \"2026-08-14T21:39:57.000000Z\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Notifications - Unauthenticated (Expect 401)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('status');",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"    if (jsonData.data.length > 0) {",
+									"        pm.collectionVariables.set('notification_id', jsonData.data[0].id);",
+									"    }",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notifications",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get All Notifications - Unauthenticated (Expect 401).example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/notifications",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"notifications"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.23"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 18:54:50 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 401,\n    \"message\": \"Unauthenticated\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Specific Notification",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('id');",
+									"    pm.expect(jsonData.data).to.have.property('title');",
+									"    pm.expect(jsonData.data).to.have.property('is_read');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notifications/{{notification_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications",
+								"{{notification_id}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Specific Notification.example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/notifications/{{notification_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"notifications",
+										"{{notification_id}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.23"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 18:41:00 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Notification retrieved successfully\",\n    \"data\": {\n        \"id\": 7,\n        \"user_id\": 3,\n        \"title\": \"Test Notification\",\n        \"body\": \"This is a test notification\",\n        \"is_read\": false,\n        \"created_at\": \"2026-08-14T21:39:57.000000Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Specific Notification - Not Found (Expect 404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('id');",
+									"    pm.expect(jsonData.data).to.have.property('title');",
+									"    pm.expect(jsonData.data).to.have.property('is_read');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notifications/{{notification_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications",
+								"{{notification_id}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Specific Notification - Not Found (Expect 404).example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/notifications/{{notification_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"notifications",
+										"{{notification_id}}"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.23"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 18:52:03 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 404,\n    \"message\": \"Resource not found\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Mark Notification as Read",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Notification is marked as read\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.is_read).to.eql(true);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notifications/{{notification_id}}/read",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications",
+								"{{notification_id}}",
+								"read"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Mark Notification as Read.example",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/notifications/{{notification_id}}/read",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"notifications",
+										"{{notification_id}}",
+										"read"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.23"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 18:41:23 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Notification marked as read\",\n    \"data\": {\n        \"id\": 7,\n        \"user_id\": 3,\n        \"title\": \"Test Notification\",\n        \"body\": \"This is a test notification\",\n        \"is_read\": true,\n        \"created_at\": \"2026-08-14T21:39:57.000000Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Mark Notification as Read - Wrong User (Expect 403)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Notification is marked as read\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.is_read).to.eql(true);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notifications/{{notification_id}}/read",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications",
+								"{{notification_id}}",
+								"read"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Mark Notification as Read - Wrong User (Expect 403).example",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/notifications/2/read",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"notifications",
+										"2",
+										"read"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.23"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 19:00:03 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 403,\n    \"message\": \"This action is unauthorized\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Unauthorized Access (Wrong User) - Expect 403",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403 or 404 (not accessible)\", function () {",
+									"    pm.expect([403, 404]).to.include(pm.response.code);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notifications/999999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications",
+								"999999"
+							]
+						},
+						"description": "Replace 999999 with a real notification ID that belongs to a different user, to confirm the policy blocks cross-user access (expect 403 or 404)."
+					},
+					"response": [
+						{
+							"name": "Unauthorized Access (Wrong User) - Expect 403.example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/notifications/2",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"notifications",
+										"2"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.23"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 18:46:36 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 403,\n    \"message\": \"This action is unauthorized\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Notification",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response confirms deletion\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notifications/{{notification_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications",
+								"{{notification_id}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Delete Notification.example",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/notifications/{{notification_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"notifications",
+										"{{notification_id}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.23"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 18:47:13 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Notification deleted\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Notification - Wrong User (Expect 403)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response confirms deletion\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notifications/{{notification_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications",
+								"{{notification_id}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Delete Notification - Wrong User (Expect 403).example",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/notifications/2",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"notifications",
+										"2"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.4.23"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 19:01:37 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 403,\n    \"message\": \"This action is unauthorized\",\n    \"data\": null\n}"
 						}
 					]
 				}
@@ -2392,7 +3474,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "2|gFHjMxZ2eTqatQKnRmvBaxRp83gvIr50Aat0maYm47ab23ac",
+									"value": "{{authorization_secret}}",
 									"type": "string"
 								}
 							]
@@ -2400,17 +3482,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/data-export/tasks",
-							"protocol": "http",
+							"raw": "{{base_url}}/data-export/tasks",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"data-export",
 								"tasks"
 							]
@@ -2489,7 +3565,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "2|gFHjMxZ2eTqatQKnRmvBaxRp83gvIr50Aat0maYm47ab23ac",
+									"value": "{{authorization_secret}}",
 									"type": "string"
 								}
 							]
@@ -2497,17 +3573,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/data-export/users",
-							"protocol": "http",
+							"raw": "{{base_url}}/data-export/users",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"data-export",
 								"users"
 							]
@@ -2586,7 +3656,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "2|gFHjMxZ2eTqatQKnRmvBaxRp83gvIr50Aat0maYm47ab23ac",
+									"value": "{{authorization_secret}}",
 									"type": "string"
 								}
 							]
@@ -2594,17 +3664,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/data-export/courses",
-							"protocol": "http",
+							"raw": "{{base_url}}/data-export/courses",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"data-export",
 								"courses"
 							]
@@ -2683,7 +3747,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "2|gFHjMxZ2eTqatQKnRmvBaxRp83gvIr50Aat0maYm47ab23ac",
+									"value": "{{authorization_secret}}",
 									"type": "string"
 								}
 							]
@@ -2697,17 +3761,11 @@
 							}
 						],
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/data-export/all",
-							"protocol": "http",
+							"raw": "{{base_url}}/data-export/all",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{base_url}}"
 							],
-							"port": "8000",
 							"path": [
-								"api",
 								"data-export",
 								"all"
 							]
@@ -2786,16 +3844,60 @@
 								}
 							],
 							"cookie": [],
-							"body": "PK\u0003\u0004\u0014\u0000\u0002\u0000\b\u0000<�\u000b]Q|\t)�\u0000\u0000\u0000�\u0000\u0000\u0000\u000b\u0000\u0000\u0000courses.csvm�;\u000e�0\u0010E�>���� ���qǧ��\u0002�!\u001e�\u0014I��\b�6\n��\u0016HA$�T��\u0015��z�\u001e�(�]v�A�\u001fc\ns�����\u0005� �ķ�p��_f\u0006+�3'VG�\u0002K��:�\u00073�1�\u0010�6E��\\׊J�/�%�~3�j�\u0005S�3&\u0019��\u0006�����\u0015\u0015�jG\u0005l��\u0017PK\u0003\u0004\u0014\u0000\u0002\u0000\b\u0000<�\u000b]I�sB�\u0001\u0000\u0000-\u0006\u0000\u0000\t\u0000\u0000\u0000tasks.csvŔ�n�0\u0010@�����Ne;q���B\u0005\u0016�\u0005Z�]K�8$��~\u001b\u0007>�_��tժ\rp#R\u000e�7���x�_?~ZM\u001a?����Q��\u0019�����\u000bַ1V���\u00103\u0004�W��]*']o}oÑ\fA�q�M��3)�\u0002iz�\u001e±�\u000f!�\u0013|\u001bF}�K}Pmc4�~��w޶\u0003>��s\u0013���@8v&�8�eF댕�����$����vgZm�-yRG���\t�W�9�B\n�Q�h�Rb��\\ݜ\u0014\b\\_��<٨V�������ic\u0001�>k�\u000bA��nw�*8���X�K0<O�X֫��\u0014�\u000bz���ܯ����y�dQ�y���8�T�y�V�\u001e�{�l�\n����\u0005\u000e>\u001e�웝\r�\t\u001e��`���#f���M2΁3y2�dU�g��oШ��eA�<E������`���e��c�\u000fV��\u0011�|\u0007o����Źة\u000fϨ�h\u0005��9�����QIZ�y�\u0018;����X�%{��g�~\u0003PK\u0003\u0004\u0014\u0000\u0002\u0000\b\u0000<�\u000b]\u0007@���\u0000\u0000\u0000�\u0002\u0000\u0000\t\u0000\u0000\u0000users.csv��]j�0\f��u��gm��Ob=u\u0007�\u0019���6\u0010���`w�Î�+���J�H\u0007B�?�'����O��%c.�\u001fp}���*��㐮[���J��8楦\u0006\u00155䟚�Ƃ�ɲ�L��u��%\u0012���v�hS���\u0019�a���}�\\ՁM`\nJ�`\u0004az{���m�d\nv�\u001cM��=D���*���o��?��\u001aJ����qS��vVղ\u0016ƼPho���\u0019�ek�L��9���\n�^.\u0014�ԣ�D����_\ngPK\u0001\u0002?\u0003\u0014\u0000\u0002\u0000\b\u0000<�\u000b]Q|\t)�\u0000\u0000\u0000�\u0000\u0000\u0000\u000b\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000��\u0000\u0000\u0000\u0000courses.csvPK\u0001\u0002?\u0003\u0014\u0000\u0002\u0000\b\u0000<�\u000b]I�sB�\u0001\u0000\u0000-\u0006\u0000\u0000\t\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000���\u0000\u0000\u0000tasks.csvPK\u0001\u0002?\u0003\u0014\u0000\u0002\u0000\b\u0000<�\u000b]\u0007@���\u0000\u0000\u0000�\u0002\u0000\u0000\t\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000���\u0002\u0000\u0000users.csvPK\u0005\u0006\u0000\u0000\u0000\u0000\u0003\u0000\u0003\u0000�\u0000\u0000\u0000�\u0003\u0000\u0000\u0000\u0000"
+							"body": "PK\u0003\u0004\u0014\u0000\u0002\u0000\b\u0000<�\u000b]Q|\t)�\u0000\u0000\u0000�\u0000\u0000\u0000\u000b\u0000\u0000\u0000courses.csvm�;\u000e�0\u0010E�>���� ���qǧ��\u0002�!\u001e�\u0014I��\b�6\n��\u0016HA$�T��\u0015��z�\u001e�(�]v�A�\u001fc\ns�����\u0005� �ķ�p��_f\u0006+�3'VG�\u0002K��:�\u00073�1�\u0010�6E��\\׊J�/�%�~3�j�\u0005S�3&\u0019��\u0006�����\u0015\u0015�jG\u0005l��\u0017PK\u0003\u0004\u0014\u0000\u0002\u0000\b\u0000<�\u000b]I�sB�\u0001\u0000\u0000-\u0006\u0000\u0000\t\u0000\u0000\u0000tasks.csvŔ�n�0\u0010@�����Ne;q���B\u0005\u0016�\u0005Z�]K�8$��~\u001b\u0007>�_��tժ\rp#R\u000e�7���x�_?~ZM\u001a?����Q��\u0019�����\u000bַ1V���\u00103\u0004�W��]*']o}oÑ\fA�q�M��3)�\u0002iz�\u001e±�\u000f!�\u0013|\u001bF}�K}Pmc4�~��w޶\u0003>��s\u0013���@8v&�8�eF댕�����$����vgZm�-yRG���\t�W�9�B\n�Q�h�Rb��\\ݜ\u0014\b\\_��<٨V�������ic\u0001�>k�\u000bA��nw␡�*8���X�K0<O�X֫��\u0014�\u000bz���ܯ����y�dQ�y���8�T�y�V�\u001e�{�l�\n����\u0005\u000e>\u001e�웝\r�\t\u001e��`���#f���M2΁3y2�dU�g��o␡Ш��eA�<E������`���e��c�\u000fV��\u0011�|\u0007␡␡o����Źة\u000fϨ�h\u0005��9�����QIZ�y�\u0018;��␡��X�%{��g�~\u0003PK\u0003\u0004\u0014\u0000\u0002\u0000\b\u0000<�\u000b]\u0007@���\u0000\u0000\u0000�\u0002\u0000\u0000\t\u0000\u0000\u0000users.csv��]j�0\f��u��gm��Ob=u\u0007�\u0019���6\u0010���`w�Î�+���J�H\u0007B�?�'����O��%c.�\u001fp}���*��㐮[���J��8楦\u0006\u00155䟚�Ƃ�ɲ�L��u��%\u0012���v�hS���\u0019�a���}�\\ՁM`\nJ�`\u0004az{���m�d\nv�\u001cM��=D���*���o��?��\u001aJ����qS��vVղ\u0016ƼPho���\u0019�ek�L��9���\n�^.\u0014�ԣ�D���␡�_\ngPK\u0001\u0002?\u0003\u0014\u0000\u0002\u0000\b\u0000<�\u000b]Q|\t)�\u0000\u0000\u0000�\u0000\u0000\u0000\u000b\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000��\u0000\u0000\u0000\u0000courses.csvPK\u0001\u0002?\u0003\u0014\u0000\u0002\u0000\b\u0000<�\u000b]I�sB�\u0001\u0000\u0000-\u0006\u0000\u0000\t\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000���\u0000\u0000\u0000tasks.csvPK\u0001\u0002?\u0003\u0014\u0000\u0002\u0000\b\u0000<�\u000b]\u0007@���\u0000\u0000\u0000�\u0002\u0000\u0000\t\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000���\u0002\u0000\u0000users.csvPK\u0005\u0006\u0000\u0000\u0000\u0000\u0003\u0000\u0003\u0000�\u0000\u0000\u0000�\u0003\u0000\u0000\u0000\u0000"
 						}
 					]
 				}
 			]
 		}
 	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
 	"variable": [
 		{
-			"key": "http://127.0.0.1:8000/api",
+			"key": "base_url",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "notification_id",
+			"value": ""
+		},
+		{
+			"key": "task_id_1",
+			"value": ""
+		},
+		{
+			"key": "task_id_2",
+			"value": ""
+		},
+		{
+			"key": "study_plan_id",
 			"value": ""
 		}
 	]
