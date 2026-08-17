@@ -7,16 +7,15 @@ use App\Http\Requests\StoreStudyPlanRequest;
 use App\Http\Resources\StudyPlanResource;
 use App\Models\StudyPlan;
 use App\Models\Task;
-use App\Services\FakeStudyPlanGeneratorService;
+use App\Services\StudyPlanGeneratorService;
 use Illuminate\Http\Request;
 
 class StudyPlanController extends Controller
 {
     public function __construct(
-        // TODO: لما ييجي Grok API key، بدّلي دي بـ:
         // private readonly StudyPlanGeneratorService $generator
 
-        private readonly FakeStudyPlanGeneratorService $generator
+      private readonly StudyPlanGeneratorService $generator
     ) {}
 
     /**
