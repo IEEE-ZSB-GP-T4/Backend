@@ -11,6 +11,8 @@
 - [Courses](#courses)
 - [Tasks](#tasks)
 - [Notifications](#notifications)
+- [Study Plan](#study-plan)
+- [Ai Integration](#Ai-integration-using-URL)
 - [Data Export](#data-export)
 - [Security](#security)
 - [Branching Strategy](#branching-strategy)
@@ -1582,13 +1584,9 @@ Plan generation is handled by a swappable service, following the same pattern us
 ### Required environment variables
 
 ```env
-GROK_API_KEY=
-GROK_API_URL=https://api.x.ai/v1/chat/completions
-GROK_MODEL=grok-4
+# AI Planner URL
+AI_PLANNER_URL=https://detest-eggnog-process.ngrok-free.dev
 ```
-
-`GROK_API_KEY` is left empty until deployment/integration — the real service throws a clear error if a plan is requested while it's unset, rather than failing silently.
-
 ---
 
 ## Database Schema: Study Plans
