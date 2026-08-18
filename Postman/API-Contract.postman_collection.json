@@ -13,6 +13,9 @@
 				{
 					"name": "Register",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -575,7 +578,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Data structure\",\n    \"instructor\": \"Dr. Ahmed\",\n    \"code\": \"20\"\n}"
+							"raw": "{\n    \"name\": \"Algorithms\",\n    \"instructor\": \"Dr. Ahmed\",\n    \"code\": \"CS202\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/courses",
@@ -982,13 +985,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{base_url}}/tasks/1",
+							"raw": "{{base_url}}/tasks/2",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"tasks",
-								"1"
+								"2"
 							]
 						}
 					},
@@ -1075,7 +1078,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"course_id\": 1,\n    \"title\": \" SQL Joins\",\n    \"description\": \"Study INNER JOIN, LEFT JOIN and RIGHT JOIN\",\n    \"deadline\": \"2026-08-15 18:00:00\",\n    \"estimated_hours\": 2.5,\n    \"priority\": \"high\"\n}",
+							"raw": "{\n    \"course_id\": 3,\n    \"title\": \"pppppppp\",\n    \"description\": \"man is die\",\n    \"deadline\": \"2026-08-15 18:00:00\",\n    \"estimated_hours\": 4,\n    \"priority\": \"high\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1649,6 +1652,120 @@
 							"body": "{\n    \"status\": 200,\n    \"message\": \"Dashboard retrieved successfully\",\n    \"data\": {\n        \"summary\": {\n            \"total_courses\": 1,\n            \"pending_tasks\": 1,\n            \"study_hours_this_week\": 0\n        },\n        \"upcoming_deadlines\": [\n            {\n                \"id\": 1,\n                \"course_id\": 1,\n                \"title\": \"SQL Joins\",\n                \"description\": \"Study INNER JOIN, LEFT JOIN and RIGHT JOIN\",\n                \"deadline\": \"2026-08-15T18:00:00.000000Z\",\n                \"estimated_hours\": \"2.50\",\n                \"priority\": \"high\",\n                \"status\": \"pending\",\n                \"completed_at\": null,\n                \"reminder_sent_at\": null,\n                \"second_reminder_sent_at\": null,\n                \"created_at\": \"2026-08-14T18:00:04.000000Z\",\n                \"updated_at\": \"2026-08-14T18:00:04.000000Z\",\n                \"course\": {\n                    \"id\": 1,\n                    \"name\": \"Data structure\",\n                    \"code\": \"20\"\n                }\n            }\n        ],\n        \"ai_insight\": {\n            \"message\": \"You have upcoming deadlines. Make sure to complete your highest priority tasks first.\"\n        }\n    }\n}"
 						}
 					]
+				},
+				{
+					"name": "data-scince",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authorization_secret}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/dashboard/data-science",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dashboard",
+								"data-science"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "data-scince",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/dashboard/data-science",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"dashboard",
+										"data-science"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.33"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Aug 2026 19:25:52 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Data science dashboard retrieved successfully\",\n    \"data\": {\n        \"user_id\": 1,\n        \"dashboard\": {\n            \"kpis\": {\n                \"user_id\": 1,\n                \"task_completion_rate\": 0,\n                \"time_utilization_rate\": 0,\n                \"overall_productivity_score\": 0\n            },\n            \"visuals\": {\n                \"tasks_status_donut\": {\n                    \"data\": [\n                        {\n                            \"domain\": {\n                                \"x\": [\n                                    0,\n                                    1\n                                ],\n                                \"y\": [\n                                    0,\n                                    1\n                                ]\n                            },\n                            \"hole\": 0.5,\n                            \"hovertemplate\": \"status=%{label}<br>count=%{value}<extra></extra>\",\n                            \"labels\": \"['pending']\",\n                            \"legendgroup\": \"\",\n                            \"name\": \"\",\n                            \"showlegend\": true,\n                            \"values\": {\n                                \"dtype\": \"i1\",\n                                \"bdata\": \"BA==\"\n                            },\n                            \"type\": \"pie\",\n                            \"textinfo\": \"label+value\",\n                            \"textposition\": \"inside\"\n                        }\n                    ],\n                    \"layout\": {\n                        \"legend\": {\n                            \"tracegroupgap\": 0\n                        },\n                        \"title\": {\n                            \"text\": \"Task Status Overview\"\n                        },\n                        \"piecolorway\": [\n                            \"#0A369D\",\n                            \"#4472CA\",\n                            \"#5E7CE2\",\n                            \"#92B4F4\",\n                            \"#CFDEE7\"\n                        ]\n                    }\n                },\n                \"tasks_by_priority_bar\": {\n                    \"data\": [\n                        {\n                            \"alignmentgroup\": \"True\",\n                            \"hovertemplate\": \"status=pending<br>priority=%{x}<br>count=%{text}<extra></extra>\",\n                            \"legendgroup\": \"pending\",\n                            \"marker\": {\n                                \"color\": \"#0A369D\",\n                                \"pattern\": {\n                                    \"shape\": \"\"\n                                }\n                            },\n                            \"name\": \"pending\",\n                            \"offsetgroup\": \"pending\",\n                            \"orientation\": \"v\",\n                            \"showlegend\": true,\n                            \"text\": {\n                                \"dtype\": \"f8\",\n                                \"bdata\": \"AAAAAAAAEEA=\"\n                            },\n                            \"textposition\": \"outside\",\n                            \"x\": \"['high']\",\n                            \"xaxis\": \"x\",\n                            \"y\": {\n                                \"dtype\": \"i1\",\n                                \"bdata\": \"BA==\"\n                            },\n                            \"yaxis\": \"y\",\n                            \"type\": \"bar\"\n                        }\n                    ],\n                    \"layout\": {\n                        \"xaxis\": {\n                            \"anchor\": \"y\",\n                            \"domain\": [\n                                0,\n                                1\n                            ],\n                            \"title\": {\n                                \"text\": \"priority\"\n                            }\n                        },\n                        \"yaxis\": {\n                            \"anchor\": \"x\",\n                            \"domain\": [\n                                0,\n                                1\n                            ],\n                            \"title\": {\n                                \"text\": \"count\"\n                            }\n                        },\n                        \"legend\": {\n                            \"title\": {\n                                \"text\": \"status\"\n                            },\n                            \"tracegroupgap\": 0\n                        },\n                        \"title\": {\n                            \"text\": \"Tasks Status by Priority\"\n                        },\n                        \"barmode\": \"group\"\n                    }\n                }\n            }\n        }\n    }\n}"
+						}
+					]
 				}
 			]
 		},
@@ -1661,7 +1778,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -1674,7 +1790,10 @@
 									"    if (allTasks.length > 0) pm.collectionVariables.set('task_id_1', allTasks[0].id);",
 									"    if (allTasks.length > 1) pm.collectionVariables.set('task_id_2', allTasks[1].id);",
 									"});"
-								]
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1684,7 +1803,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token}}",
+									"value": "{{authorization_secret}}",
 									"type": "string"
 								}
 							]
@@ -1773,7 +1892,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 201\", function () {",
 									"    pm.response.to.have.status(201);",
@@ -1785,7 +1903,10 @@
 									"    pm.expect(jsonData.data.generated_plan).to.have.property('warnings');",
 									"    pm.collectionVariables.set('study_plan_id', jsonData.data.id);",
 									"});"
-								]
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1795,7 +1916,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token}}",
+									"value": "{{authorization_secret}}",
 									"type": "string"
 								}
 							]
@@ -1813,14 +1934,17 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"available_hours\": 3,\n    \"task_ids\": [{{task_id_1}}, {{task_id_2}}]\n}"
+							"raw": "{\n    \"available_hours\": 10,\n    \"task_ids\": [1]\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/study-plan",
+							"raw": "http://localhost:8000/api/study-plan",
+							"protocol": "http",
 							"host": [
-								"{{base_url}}"
+								"localhost"
 							],
+							"port": "8000",
 							"path": [
+								"api",
 								"study-plan"
 							]
 						}
@@ -1898,12 +2022,14 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 422 (validation failed)\", function () {",
 									"    pm.response.to.have.status(422);",
 									"});"
-								]
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1913,7 +2039,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token}}",
+									"value": "{{authorization_secret}}",
 									"type": "string"
 								}
 							]

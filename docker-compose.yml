@@ -19,6 +19,9 @@ services:
       mysql:
         condition: service_healthy
 
+    environment:
+      DATA_SCIENCE_PYTHON: /opt/data-science-venv/bin/python
+
     command: php artisan serve --host=0.0.0.0 --port=8000
 
   mysql:

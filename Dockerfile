@@ -5,6 +5,9 @@ RUN apt-get update && apt-get install -y \
     curl \
     unzip \
     libzip-dev \
+    python3 \
+    python3-pip \
+    python3-venv \
     && docker-php-ext-install \
     pdo_mysql \
     zip
@@ -16,6 +19,12 @@ WORKDIR /var/www/html
 COPY . .
 
 RUN composer install --no-interaction --prefer-dist
+
+RUN python3 -m venv /opt/data-science-venv \
+    && /opt/data-science-venv/bin/pip install --upgrade pip \
+    && /opt/data-science-venv/bin/pip install -r Data-Science/requirements.txt
+
+ENV DATA_SCIENCE_PYTHON=/opt/data-science-venv/bin/python
 
 EXPOSE 8000
 

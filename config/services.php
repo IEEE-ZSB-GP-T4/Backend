@@ -36,7 +36,12 @@ return [
     ],
 
     'ai_planner' => [
-    'url' => env('AI_PLANNER_URL'),
-],
+        'url' => env('AI_PLANNER_URL'),
+    ],
+
+    'data_science' => [
+        'python' => env('DATA_SCIENCE_PYTHON', 'python3'),
+        'timeout' => env('DATA_SCIENCE_TIMEOUT', 60),
+    ],
 
 ];
