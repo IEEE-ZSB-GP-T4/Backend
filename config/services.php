@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'ai_planner' => [
+    'url' => env('AI_PLANNER_URL'),
+],
+
 ];
