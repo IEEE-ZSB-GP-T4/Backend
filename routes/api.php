@@ -123,5 +123,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ===================== Dashboard Routes =====================
     Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/dashboard/data-science', [DashboardController::class, 'dataScience']);
 
 });

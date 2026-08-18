@@ -4,10 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ApiResponse;
 use App\Models\Task;
+use App\Services\DataScienceDashboardService;
 use Illuminate\Http\Request;
+use RuntimeException;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        private readonly DataScienceDashboardService $dataScienceDashboardService
+    ) {}
+
     /**
      * GET /api/dashboard
      */
@@ -102,6 +108,30 @@ class DashboardController extends Controller
                     'message' => $aiInsight
                 ]
             ]
+        );
+    }
+
+    /**
+     * GET /api/dashboard/data-science
+     */
+    public function dataScience(Request $request)
+    {
+        try {
+            $payload = $this->dataScienceDashboardService->generateForUser(
+                $request->user()->id
+            );
+        } catch (RuntimeException $exception) {
+            return ApiResponse::response(
+                500,
+                $exception->getMessage(),
+                null
+            );
+        }
+
+        return ApiResponse::response(
+            200,
+            'Data science dashboard retrieved successfully',
+            $payload['data'] ?? $payload
         );
     }
 

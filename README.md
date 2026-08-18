@@ -14,6 +14,7 @@
 - [Study Plan](#study-plan)
 - [Ai Integration](#Ai-integration-using-URL)
 - [Data Export](#data-export)
+- [Data Science Integration](#data-science-integration)
 - [Security](#security)
 - [Branching Strategy](#branching-strategy)
 
@@ -1846,6 +1847,176 @@ Extract CSV files
 Replace local dataset
     ↓
 Ready for Data Science / ML
+```
+
+---
+
+# Data Science Integration
+
+The backend is integrated with the local `Data-Science` module to generate analytics for the authenticated user's dashboard.
+
+Instead of requiring the frontend to call Python directly, Laravel exports the latest database data to CSV, runs the data science script, and returns the generated KPIs and Plotly chart configuration through a protected API endpoint.
+
+## Data Science Dashboard Endpoint
+
+| Method | Endpoint | Authentication | Description |
+| ------ | -------- | -------------- | ----------- |
+| GET | `/api/dashboard/data-science` | Yes | Return data science KPIs and visuals for the authenticated user |
+
+### Request
+
+```http
+GET /api/dashboard/data-science
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Successful Response
+
+```json
+{
+    "status": 200,
+    "message": "Data science dashboard retrieved successfully",
+    "data": {
+        "user_id": 1,
+        "dashboard": {
+            "kpis": {
+                "user_id": 1,
+                "task_completion_rate": 75,
+                "time_utilization_rate": 60,
+                "overall_productivity_score": 69
+            },
+            "visuals": {
+                "tasks_status_donut": {},
+                "tasks_by_priority_bar": {}
+            }
+        }
+    }
+}
+```
+
+## How It Works
+
+```text
+Authenticated Request
+        ↓
+GET /api/dashboard/data-science
+        ↓
+DataScienceDashboardService
+        ↓
+CsvExportService exports fresh CSV files
+        ↓
+storage/app/exports
+        ↓
+Data-Science/src/connect.py USER_ID
+        ↓
+Python + Pandas + Plotly
+        ↓
+Laravel returns JSON to frontend
+```
+
+The service sets `DATA_DIR` automatically, so the Python code reads from:
+
+```text
+storage/app/exports
+```
+
+## Required Python Dependencies
+
+The data science module uses the dependencies listed in:
+
+```text
+Data-Science/requirements.txt
+```
+
+For local development without Docker:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r Data-Science/requirements.txt
+```
+
+Then set the Python executable in `.env`:
+
+```env
+DATA_SCIENCE_PYTHON=/absolute/path/to/Backend/.venv/bin/python
+DATA_SCIENCE_TIMEOUT=60
+```
+
+If you want to use the system Python instead:
+
+```env
+DATA_SCIENCE_PYTHON=python3
+DATA_SCIENCE_TIMEOUT=60
+```
+
+## Docker Setup
+
+The Docker image installs Python and creates a dedicated virtual environment:
+
+```text
+/opt/data-science-venv/bin/python
+```
+
+The container sets:
+
+```env
+DATA_SCIENCE_PYTHON=/opt/data-science-venv/bin/python
+```
+
+After changing the Dockerfile or Python requirements, rebuild the container:
+
+```bash
+docker compose down
+docker compose build --no-cache
+docker compose up -d
+```
+
+Then clear Laravel config cache:
+
+```bash
+docker compose exec app php artisan config:clear
+```
+
+## Postman Testing
+
+1. Login and copy the Sanctum token:
+
+```http
+POST /api/login
+Content-Type: application/json
+Accept: application/json
+```
+
+```json
+{
+    "email": "your_email@example.com",
+    "password": "your_password"
+}
+```
+
+2. Send the token to the data science endpoint:
+
+```http
+GET /api/dashboard/data-science
+Accept: application/json
+Authorization: Bearer YOUR_TOKEN
+```
+
+## Troubleshooting
+
+If the response says `python3: not found`, the app environment cannot find Python. Rebuild the Docker image or set `DATA_SCIENCE_PYTHON` to a valid Python executable.
+
+If the response says `ModuleNotFoundError: No module named 'pandas'`, Laravel is using a Python environment without the data science dependencies. Install the requirements or point `DATA_SCIENCE_PYTHON` to the virtual environment that has them installed.
+
+Useful Docker checks:
+
+```bash
+docker compose exec app printenv DATA_SCIENCE_PYTHON
+docker compose exec app /opt/data-science-venv/bin/python -c "import pandas; print(pandas.__version__)"
+docker compose exec app php artisan config:clear
+docker compose restart app
 ```
 
 ---
