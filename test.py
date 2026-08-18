@@ -9,7 +9,7 @@ import sys
 # Configuration
 # =========================
 
-TOKEN = "5|s7gRqEf5pP3i92fhyKqyUUDhlMUBZyNZnbI52J2Qeea13bdc"
+TOKEN = "2|93F2LneEWAzp3B0QCXG7KMsl4BSx6fYi3cb3g9gI158e3174"
 
 URL = "http://127.0.0.1:8000/api/data-export/all"
 
