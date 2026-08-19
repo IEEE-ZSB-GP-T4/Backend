@@ -66,18 +66,17 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $upcomingDeadlines = Task::with([
-            'course:id,name,code'
-        ])
-            ->whereHas('course', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            })
-            ->where('status', 'pending')
-            ->where('deadline', '>=', now())
-            ->orderBy('deadline')
-            ->take(5)
-            ->get();
-
+     $upcomingDeadlines = Task::with([
+    'course:id,name,code'
+     ])
+     ->whereHas('course', function ($query) use ($user) {
+        $query->where('user_id', $user->id);
+     })
+     ->where('status', 'pending')
+     ->whereDate('deadline', '>=', now()->toDateString())
+     ->orderBy('deadline')
+     ->take(5)
+     ->get();
 
         /*
         |--------------------------------------------------------------------------
